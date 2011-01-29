@@ -1,10 +1,10 @@
 === Related Posts Slider ===
 Contributors: internet techies
-Tags: related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,css,simple,thumbnail,image,sidebar,plugin,page,site,blogs,style,single,flash,gallery
+Tags: Related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,simple,thumbnail,image,sidebar,plugin,single,flash,gallery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
-Requires at least: 2.9
+Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.1
+Stable tag: 1.2
 
 == Description ==
 
@@ -69,9 +69,14 @@ Visit the plugin page (http://www.clickonf5.org/related-posts-slider) to see mor
 
 == Upgrade Notice ==
 
-First Release, so no upgrade instructions needed.
+= 1.2 =
+Upgrade if using latest version of YARPP, so that slider will work properly.
 
 == Changelog ==
+
+Version 1.2 (01/30/2011)
+
+1. Upgrade to go with YARPP upgrade i.e YARPP 3.2. Do upgrade if using latest version of YARPP
 
 Version 1.1 (01/29/2011)
 

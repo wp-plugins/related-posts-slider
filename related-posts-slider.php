@@ -3,10 +3,10 @@
 Plugin Name: Related Posts Slider
 Plugin URI: http://www.clickonf5.org/related-posts-slider
 Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. Watch Live Demo at <a href="http://www.clickonf5.org/">Internet Techies</a>.
-Version: 1.1	
+Version: 1.2	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
-WordPress version supported: 2.9 and above
+WordPress version supported: 3.0 and above
 */
 
 /*  Copyright 2011  Internet Techies  (email : tedeshpa@gmail.com)
@@ -29,7 +29,7 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","1.1",false);
+define("CF5_RPS_VER","1.2",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function cf5_rps_url( $path = '' ) {
@@ -323,13 +323,15 @@ add_shortcode('rps', 'cf5_rps_shortcode');
 
 function get_cf5_yarpp_related_posts($type,$args,$reference_ID=false) {
 if(function_exists(yarpp_related)):
-	global $wpdb, $post, $userdata, $yarpp_time, $yarpp_demo_time, $wp_query, $id, $page, $pages, $authordata, $day, $currentmonth, $multipage, $more, $numpages;
+	global $wpdb, $post, $userdata, $yarpp_time, $yarpp_demo_time, $wp_query, $id, $page, $pages, $authordata, $day, $currentmonth, $multipage, $more, $pagenow, $numpages, $yarpp_cache;
 	
 	get_currentuserinfo();
 
 	// set the "domain prefix", used for all the preferences.
 	$domainprefix = '';
 	
+	if ($yarpp_cache->yarpp_time) // if we're already in a YARPP loop, stop now.
+			return false;
 	if (is_object($post) and !$reference_ID)
 			$reference_ID = $post->ID;
 
@@ -350,7 +352,8 @@ if(function_exists(yarpp_related)):
 	
     yarpp_cache_enforce($type,$reference_ID);
 	
-	$yarpp_time = true; 
+	//$yarpp_time = true; 
+	$yarpp_cache->begin_yarpp_time($reference_ID);
 	
 	// just so we can return to normal later
 	$current_query = $wp_query;
@@ -367,7 +370,7 @@ if(function_exists(yarpp_related)):
 	$current_currentmonth = $currentmonth;
 
 	$related_query = new WP_Query();
-	$orders = split(' ',$order);
+	$orders = explode(' ',$order);
 		$related_query->query(array('p'=>$reference_ID,'orderby'=>$orders[0],'order'=>$orders[1],'showposts'=>$limit,'post_type'=>$type));
 
 	$wp_query = $related_query;
@@ -385,7 +388,8 @@ if(function_exists(yarpp_related)):
 	}}
 	
 	unset($related_query);
-	$yarpp_time = false; // YARPP time is over... :(
+	//$yarpp_time = false; // YARPP time is over... :(
+	$yarpp_cache->end_yarpp_time(); // YARPP time is over... :(
 	
 	// restore the older wp_query.
 	$wp_query = null; $wp_query = $current_query; unset($current_query);
