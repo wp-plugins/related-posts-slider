@@ -3,7 +3,7 @@
 Plugin Name: Related Posts Slider
 Plugin URI: http://www.clickonf5.org/related-posts-slider
 Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. Watch Live Demo at <a href="http://www.clickonf5.org/">Internet Techies</a>.
-Version: 1.0	
+Version: 1.1	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
 WordPress version supported: 2.9 and above
@@ -29,7 +29,7 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","1.0",false);
+define("CF5_RPS_VER","1.1",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function cf5_rps_url( $path = '' ) {
@@ -301,10 +301,10 @@ function cf5_rps_automatic_insertion($content){
  global $cf5_rps,$post,$wp_query;
 	 if(is_singular()) {
 		if($cf5_rps['insert']=='content_down'){
-		   $content=$content.'[rps]';
+		   $content=$content.'&nbsp;[rps]';
 		}
 		if($cf5_rps['insert']=='content_up'){
-		   $content='[rps]'.$content;
+		   $content='[rps]&nbsp;'.$content;
 		}
 	 }
 	return $content;

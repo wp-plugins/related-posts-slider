@@ -3,8 +3,8 @@ Contributors: internet techies
 Tags: related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,css,simple,thumbnail,image,sidebar,plugin,page,site,blogs,style,single,flash,gallery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
 Requires at least: 2.9
-Tested up to: 3.0.4
-Stable tag: 1.0
+Tested up to: 3.1
+Stable tag: 1.1
 
 == Description ==
 
@@ -73,7 +73,9 @@ First Release, so no upgrade instructions needed.
 
 == Changelog ==
 
-As this is the first release, there is no changelog. 
+Version 1.1 (01/29/2011)
+
+1. Fix - Sometimes below content, the slider was not getting atatched. Rather it was showing [rps]. This was when the content contains shortcode at the end. This update fixes the issue.
 
 Visit the first release note on Internet Techies 
 
