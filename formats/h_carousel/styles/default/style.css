@@ -1,0 +1,141 @@
+.cf5_rps{
+  clear:both;
+  width:100%;
+}
+.rps_sldrtitle{
+  margin:10px 0;
+}
+.rps_wrapper{
+	clear:both;
+	position:relative;
+	overflow:hidden;
+	padding:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+}
+.rps_thumb{
+	padding:2px;
+}
+.rps_item a{
+	text-decoration:none;
+	display:block;
+	padding:5px;
+}
+.jcarousel-skin-default .jcarousel-container {
+}
+
+.jcarousel-skin-default .jcarousel-direction-rtl {
+	direction: rtl;
+}
+
+.jcarousel-skin-default .jcarousel-container-horizontal {
+    width: 85%;
+    padding: 20px 32px 20px 40px;
+}
+
+.jcarousel-skin-default .jcarousel-clip-horizontal {
+    width:  100%;
+    height: 100%;
+}
+
+.jcarousel-skin-default .jcarousel-item {
+    width: 100px;
+    height: 100%;
+}
+
+.jcarousel-skin-default .jcarousel-item-horizontal {
+	margin-left: 0;
+    margin-right: 10px;
+}
+
+.jcarousel-skin-default .jcarousel-direction-rtl .jcarousel-item-horizontal {
+	margin-left: 10px;
+    margin-right: 0;
+}
+
+
+.jcarousel-skin-default .jcarousel-item-placeholder {
+    background: #fff;
+    color: #000;
+}
+
+/**
+ *  Horizontal Buttons
+ */
+.jcarousel-skin-default .jcarousel-next-horizontal {
+    position: absolute;
+    top: 40%;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background: transparent url(next-horizontal.png) no-repeat 0 0;
+}
+
+.jcarousel-skin-default .jcarousel-direction-rtl .jcarousel-next-horizontal {
+    left: 5px;
+    right: auto;
+    background-image: url(prev-horizontal.png);
+	background-position: -24px 0;
+}
+
+.jcarousel-skin-default .jcarousel-next-horizontal:hover {
+    background-position: 0 0;
+}
+
+.jcarousel-skin-default .jcarousel-next-horizontal:active {
+    background-position: 0 0;
+}
+
+.jcarousel-skin-default .jcarousel-next-disabled-horizontal,
+.jcarousel-skin-default .jcarousel-next-disabled-horizontal:hover,
+.jcarousel-skin-default .jcarousel-next-disabled-horizontal:active {
+    cursor: default;
+    background-position: -24px 0;
+}
+
+.jcarousel-skin-default .jcarousel-prev-horizontal {
+    position: absolute;
+    top: 40%;
+    left: 5px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background: transparent url(prev-horizontal.png) no-repeat -24px 0;
+}
+
+.jcarousel-skin-default .jcarousel-direction-rtl .jcarousel-prev-horizontal {
+    left: auto;
+    right: 5px;
+    background-image: url(next-horizontal.png);
+	background-position: 0 0;
+}
+
+.jcarousel-skin-default .jcarousel-prev-horizontal:hover {
+    background-position: -24px 0;
+}
+
+.jcarousel-skin-default .jcarousel-prev-horizontal:active {
+    background-position: -24px 0;
+}
+
+.jcarousel-skin-default .jcarousel-prev-disabled-horizontal,
+.jcarousel-skin-default .jcarousel-prev-disabled-horizontal:hover,
+.jcarousel-skin-default .jcarousel-prev-disabled-horizontal:active {
+    cursor: default;
+    background-position: 0 0;
+}
+.rps_support{
+    float:right;
+	font-size:11px;
+	font-family:Arial, Helvetica, sans-serif;
+	line-height:14px;
+}
+.rps_support a{
+    color:#bbb !important;
+	font-weight:bold;
+	text-decoration:none;
+}
+.cf5_rps_cl{display:block;visibility:hidden;clear:left;height:0;content:".";}
+.cf5_rps_cr{display:block;visibility:hidden;clear:right;height:0;content:".";}
