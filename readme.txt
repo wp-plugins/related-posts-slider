@@ -4,7 +4,7 @@ Tags: Related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carous
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.2
+Stable tag: 1.3
 
 == Description ==
 
@@ -14,15 +14,15 @@ The slider is a lightweight jQuery implementation of the related post functional
 
 = Features =
 
-1. Showcase related posts in slider format
+1. Showcase related posts in slider format, either in news style or in horizontal carousel format
 2. Arrow navigation to see more related posts, so add as many related posts as you want
 3. Complete CSS customization from settings panel
-4. 2 Pre Styled CSS provided with the plugin, one for dark colored theme and other for lighter theme
+4. 2 Pre Styled CSS provided with the plugin, one for dark colored theme and other for lighter theme. Also you can create your own style suitable for your site in no time and use it within the plugin using a simple option.
 5. SEO benefits of showing more related posts on the post content page
-6. Compatible with YARP plugin
+6. Compatible with YARPP plugin and WordPress Related Posts plugin
 7. Widget option available for Related Posts Slider
 8. Shortcode option to insert Related Posts Slider in between the content of a post
-
+9. Translation ready
 
 [Demo](http://www.clickonf5.org/internet/online-live-stream-event-free/10888) |
 [Plugin Information](http://www.clickonf5.org/related-posts-slider) | 
@@ -34,7 +34,15 @@ Credit: [Compact News Previewer](http://tympanus.net/codrops/2010/10/03/compact-
 
 = Pre Installation Requirement =
 
-You need to install [Yet Another Related Posts Plugin](http://wordpress.org/extend/plugins/yet-another-related-posts-plugin/) before installing this plugin
+You need to install either of the two plugins before installing this plugin:
+
+1) [Yet Another Related Posts Plugin](http://wordpress.org/extend/plugins/yet-another-related-posts-plugin/) 
+
+or
+
+2) [WordPress Related Posts](http://wordpress.org/extend/plugins/wordpress-23-related-posts-plugin/)
+
+No need to install both, just one is required. In Related Posts Slider options panel you need to specify which of the above two plugins you are using to pull the related posts.
 
 = Installation =
 
@@ -63,16 +71,26 @@ FAQ section on: http://www.clickonf5.org/related-posts-slider
 
 == Screenshots ==
 1. Various Sections of the Related Posts Slider (all can be customized thru Settings Page) (with clean-blue design)
-2. Another design for the Related Post Slider (dark)
+3. Second slider format - Horizontal carousel
 
-Visit the plugin page (http://www.clickonf5.org/related-posts-slider) to see more screenshots.
+[More Screenshots](http://www.clickonf5.org/related-posts-slider)
 
 == Upgrade Notice ==
+
+= 1.3 =
+Upgrade in case you need to use carousel format of slider or WordPress Related Posts instead of YARPP.
 
 = 1.2 =
 Upgrade if using latest version of YARPP, so that slider will work properly.
 
 == Changelog ==
+
+Version 1.2 (02/05/2011)
+
+1. Feature: Now supports "WordPress Related Posts" along with YARPP
+2. Feature: Added new slider format i.e. horizontal carousel using jCarousel jQuery plugin
+3. Fix: Shortcodes (like "caption") were appearing in slider excerpt in preview section, fixed that.
+4. Feature: Made the plugin translation ready
 
 Version 1.2 (01/30/2011)
 

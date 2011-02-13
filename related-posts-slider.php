@@ -3,7 +3,7 @@
 Plugin Name: Related Posts Slider
 Plugin URI: http://www.clickonf5.org/related-posts-slider
 Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. Watch Live Demo at <a href="http://www.clickonf5.org/">Internet Techies</a>.
-Version: 1.2	
+Version: 1.3	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
 WordPress version supported: 3.0 and above
@@ -29,12 +29,14 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","1.2",false);
+define("CF5_RPS_VER","1.3",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function cf5_rps_url( $path = '' ) {
 	return plugins_url( $path, __FILE__ );
 }
+// Create Text Domain For Translations
+load_plugin_textdomain('cf5_rps', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/');
 //on activation, your Related Posts Slider options will be populated. Here a single option is used which is actually an array of multiple options
 function activate_cf5_rps() {
 	$cf5_rps_opts1 = get_option('cf5_rps_options');
@@ -82,7 +84,10 @@ function activate_cf5_rps() {
 					   'target'=>'_self',
 					   'allowable_tags'=>'',
 					   'insert'=>'content_down',
-					   'support' => '1');
+					   'support' => '1',
+					   'format' => 'default', 
+					   'plugin' => 'yarpp',
+					   'format_style' => 'plain');
 	if ($cf5_rps_opts1) {
 	    $cf5_rps = $cf5_rps_opts1 + $cf5_rps_opts2;
 		update_option('cf5_rps_options',$cf5_rps);
@@ -98,203 +103,94 @@ register_activation_hook( __FILE__, 'activate_cf5_rps' );
 global $cf5_rps,$rps_slider_shown;
 $cf5_rps = get_option('cf5_rps_options');
 require_once (dirname (__FILE__) . '/includes/cf5-rps-get-the-image.php');
+require_once (dirname (__FILE__) . '/includes/cf5-rps-slider-formats.php');
 
 function cf5_rps_wp_init() {
-//	wp_register_script('jquery', false, false, false, false);
     global $cf5_rps;
-	$css="styles/".$cf5_rps['stylesheet'].'/style.css';
-	wp_enqueue_style( 'cf5_rps_css', cf5_rps_url( $css ),false, CF5_RPS_VER, 'all'); 
-	wp_enqueue_script( 'cf5_easing', cf5_rps_url( 'js/jquery.easing.1.3.js' ),array('jquery'), CF5_RPS_VER, true); 
-	wp_enqueue_script('cf5_rps', cf5_rps_url( 'js/cf5.rps.js'), array('cf5_easing'), CF5_RPS_VER, true );
+    //format of the slider	
+	$format = $cf5_rps['format'];
+	if(!empty($format) and $format) {
+	  $rps_func = 'cf5_rps_wp_init_'.$format;
+	}
+	else {
+	  $rps_func = 'cf5_rps_wp_init_default';
+	}
+	if(!function_exists($rps_func)) {
+	  $rps_func = 'cf5_rps_wp_init_default';
+	}
+	$rps_func();
 }
 
 add_action( 'wp', 'cf5_rps_wp_init' );
 
 function cf5_rps_wp_head() {
     global $cf5_rps; 
-	$cf5_options=$cf5_rps;
-	extract($cf5_options);
-  if($cf5_rps['stylesheet']=='default'):
-	?>
-<style type="text/css">.rps_sldrtitle{font-family:<?php echo $cf5_rps['stitle_font'];?>;font-size:<?php echo $cf5_rps['stitle_size'];?>px;font-weight:<?php echo $cf5_rps['stitle_weight'];?>;font-style:<?php echo $cf5_rps['stitle_style'];?>;<?php if($stitle_color and !empty($stitle_color)){?>color:<?php echo $cf5_rps['stitle_color'];?>;<?php } ?>}.rps_wrapper{height:<?php echo $cf5_rps['height'];?>px;<?php if($bgcolor and !empty($bgcolor)){?>background:<?php echo $cf5_rps['bgcolor'];?>;<?php } ?><?php if($pcontent_color and !empty($pcontent_color)){?>color:<?php echo $cf5_rps['pcontent_color'];?>;<?php } ?>border:<?php echo $cf5_rps['obrwidth'];?>px solid <?php echo $cf5_rps['obrcolor'];?>;font-family:<?php echo $cf5_rps['pcontent_font'];?>;font-size:<?php echo $cf5_rps['pcontent_size'];?>px;line-height:<?php echo ($cf5_rps['pcontent_size']+4);?>px;}.rps_wrapper div.h1div{font-size:<?php echo $cf5_rps['ptitle_size'];?>px;line-height:<?php echo ($cf5_rps['ptitle_size']+4);?>px;font-family:<?php echo $cf5_rps['ptitle_font'];?>;font-weight:<?php echo $cf5_rps['ptitle_weight'];?>;font-style:<?php echo $cf5_rps['ptitle_style'];?>;border-bottom:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;}.rps_wrapper div.h1div a{<?php if($ptitle_color and !empty($ptitle_color)){?>color:<?php echo $cf5_rps['ptitle_color'];?> !important;<?php } ?>}.rps_wrapper div.h2div{font-family:<?php echo $cf5_rps['ltitle_font'];?>;font-size:<?php echo $cf5_rps['ltitle_size'];?>px;font-weight:<?php echo $cf5_rps['ltitle_weight'];?>;font-style:<?php echo $cf5_rps['ltitle_style'];?>;<?php if($ltitle_color and !empty($ltitle_color)){?>color:<?php echo $cf5_rps['ltitle_color'];?>;<?php } ?>line-height:<?php echo ($cf5_rps['ltitle_size']+4);?>px;}.rps_content{border:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;top:<?php echo ($cf5_rps['height']+10);?>px;<?php if($fgcolor and !empty($fgcolor)){?>background-color:<?php echo $cf5_rps['fgcolor'];?>;<?php } ?>}img.rps_thumb{width:<?php echo $cf5_rps['img_width'];?>%;max-height:<?php echo $cf5_rps['img_height'];?>px;<?php if($cf5_rps['img_align']=='left') {echo 'float:left;margin:0 5px 5px 0 !important;';}if($cf5_rps['img_align']=='right') {echo 'float:right;margin:0 0 5px 5px !important;';}	?>}.rps_content div.pdiv{border-top:<?php echo $cf5_rps['obrwidth'];?>px solid <?php echo $cf5_rps['obrcolor'];?>;}a.rps_more{<?php if($hvtext_color and !empty($hvtext_color)){?>color:<?php echo $cf5_rps['hvtext_color'];?> !important;<?php } ?>border:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;<?php if($hvcolor and !empty($hvcolor)){?>background-color: <?php echo $cf5_rps['hvcolor'];?>;<?php } ?>}.rps_item{border:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;<?php if($fgcolor and !empty($fgcolor)){?>background:<?php echo $cf5_rps['fgcolor'];?>;<?php } ?>}.rps_item:hover div.h2div,.rps_list .selected div.h2div,.rps_item:active div.h2div{<?php if($hvtext_color and !empty($hvtext_color)){?>color:<?php echo $cf5_rps['hvtext_color'];?>;<?php } ?>}.rps_item:hover, .selected{<?php if($hvcolor and !empty($hvcolor)){?>border-color:<?php echo $cf5_rps['hvcolor'];?>;background-color: <?php echo $cf5_rps['hvcolor'];?>;<?php } ?>}</style>
-<?php endif;
+	//format of the slider	
+	$format = $cf5_rps['format'];
+	if(!empty($format) and $format) {
+	  $rps_func = 'cf5_rps_wp_head_'.$format;
+	}
+	else {
+	  $rps_func = 'cf5_rps_wp_head_default';
+	}
+	if(!function_exists($rps_func)) {
+	  $rps_func = 'cf5_rps_wp_head_default';
+	}
+	$rps_func();
 }
 
 add_action( 'wp_head', 'cf5_rps_wp_head' );
 
 function cf5_rps_wp_footer() {
-    global $cf5_rps; ?>
-	<script type="text/javascript">
-	  var rps_ht = <?php echo $cf5_rps['height']; ?>
-	</script>
-<?php }
+    global $cf5_rps; 
+	//format of the slider	
+	$format = $cf5_rps['format'];
+	if(!empty($format) and $format) {
+	  $rps_func = 'cf5_rps_wp_footer_'.$format;
+	}
+	else {
+	  $rps_func = 'cf5_rps_wp_footer_default';
+	}
+	if(!function_exists($rps_func)) {
+	  $rps_func = 'cf5_rps_wp_footer_default';
+	}
+	$rps_func(); 
+}
 
 add_action( 'wp_footer', 'cf5_rps_wp_footer' );
 
 function get_related_posts_slider($echo=true,$type=array('post')){
-    global $post,$cf5_rps,$rps_slider_shown;
-	global $wpdb, $table_prefix;
-	$slider='';
-	if(function_exists(yarpp_related)){
-	  $rps_posts=get_cf5_yarpp_related_posts($type,array(),false);
+    global $cf5_rps;
+	$related_plugin = $cf5_rps['plugin'];
+	if(empty($related_plugin) or !$related_plugin) {
+	  $related_plugin = 'yarpp';
 	}
-if($rps_posts and !$rps_slider_shown):
-	$slider='<div class="rps_wrapper">
-			 <div id="rps_preview" class="rps_preview">';
-		
-	if($cf5_rps['img_pick'][0] == '1'){
-	 $custom_key = array($cf5_rps['img_pick'][1]);
-	}
-	else {
-	 $custom_key = '';
-	}
-	
-	if($cf5_rps['img_pick'][2] == '1'){
-	 $the_post_thumbnail = true;
-	}
-	else {
-	 $the_post_thumbnail = false;
-	}
-	
-	if($cf5_rps['img_pick'][3] == '1'){
-	 $attachment = true;
-	 $order_of_image = $cf5_rps['img_pick'][4];
-	}
-	else{
-	 $attachment = false;
-	 $order_of_image = '1';
-	}
-	
-	if($cf5_rps['img_pick'][5] == '1'){
-		 $image_scan = true;
-	}
-	else {
-		 $image_scan = false;
-	}
-	
-	$gti_width = false;
-	
-	if($cf5_rps['crop'] == '0'){
-	 $extract_size = 'full';
-	}
-	elseif($cf5_rps['crop'] == '1'){
-	 $extract_size = 'large';
-	}
-	elseif($cf5_rps['crop'] == '2'){
-	 $extract_size = 'medium';
-	}
-	else{
-	 $extract_size = 'thumbnail';
-	}
-	
-	$i=0;
-	foreach($rps_posts as $post_id) {
-		if($i==0){$topstyle='style="top:3px;"';}
-		else {$topstyle='';}
-		
-		$posts_table = $table_prefix.'posts'; 
-		$result = $wpdb->get_results("SELECT * FROM ".$posts_table." WHERE ID = ".$post_id, OBJECT);
-		$rps_post = $result[0];
-		
-		$permalink=get_permalink($post_id);
-		
-		$img_args = array(
-			'custom_key' => $custom_key,
-			'post_id' => $post_id,
-			'attachment' => $attachment,
-			'size' => $extract_size,
-			'the_post_thumbnail' => $the_post_thumbnail,
-			'default_image' => false,
-			'order_of_image' => $order_of_image,
-			'link_to_post' => false,
-			'image_class' => 'rps_thumb',
-			'image_scan' => $image_scan,
-			'width' => $gti_width,
-			'height' => false,
-			'echo' => false,
-			'permalink' => ''
-		);
-		
-		$pcontent = $rps_post->post_content;
-		
-		if ($cf5_rps['pcontent_from'] == "preview_content") {
-		    $pcontent = get_post_meta($post_id, 'preview_content', true);
-		}
-		if ($cf5_rps['pcontent_from'] == "excerpt") {
-		    $pcontent = $rps_post->post_excerpt;
-		}
-		
-		$pcontent = stripslashes($pcontent);
-		$pcontent = str_replace(']]>', ']]&gt;', $pcontent);
 
-		$pcontent = str_replace("\n","<br />",$pcontent);
-        $pcontent = strip_tags($pcontent, $cf5_rps['allowable_tags']);
-		
-		$content_limit=$cf5_rps['pcontent_words'];
-		if(empty($content_limit) or $content_limit==''){$flag=0;}else{$flag=1;}
-		if($flag==1){$pcontent = cf5_rps_word_limiter( $pcontent, $limit = $content_limit );}
-		if($cf5_rps['no_more']==0) {
-		   $more='<a href="'.$permalink.'" target="'.$cf5_rps['target'].'" class="rps_more">'.$cf5_rps['more'].'</a>';
+//if using YARPP	
+	if($related_plugin == 'yarpp') {
+		if(function_exists(yarpp_related)){
+		  $rps_posts=get_cf5_yarpp_related_posts($type,array(),false);
 		}
-		else{
-		   $more='';
+	}
+//if using WordPress Related Posts
+    if($related_plugin == 'wp_rp') {
+		if(function_exists('wp_get_related_posts')){
+		  $rps_posts=get_cf5_wp_rp_related_posts();
 		}
-			 
-	$slider=$slider.'		<div class="rps_content" '.$topstyle.'>
-					'.cf5_rps_get_the_image($img_args).'
-					<div class="h1div"><a href="'.$permalink.'" target="'.$cf5_rps['target'].'" >'.get_the_title($post_id).'</a></div>
-					
-					<div class="pdiv">'.$pcontent.'</div>
-					
-					<div class="cf5_rps_cl"></div>
-					<div class="cf5_rps_cr"></div>'.
-					$more
-				.'</div>';
-	$i++;} //end foreach
-
-    $slider=$slider.'		</div>
-			<div id="rps_list" class="rps_list">';
-	$i=0;
-	foreach($rps_posts as $post_id) {
-	    $page_html='';$page_close='';$selected='';
-		
-		$ltitle=get_the_title($post_id);
-		$content_limit=$cf5_rps['ltitle_words'];
-		if(empty($content_limit) or $content_limit==''){$flag=0;}else{$flag=1;}
-		if($flag==1){$ltitle = cf5_rps_word_limiter( $ltitle, $limit = $content_limit, $display_dots = false );}
-		
-		if($i%$cf5_rps['per_page'] == 0){
-			if($i==0){$page_html='<div class="rps_page" style="display:block;">';$selected='selected';}
-			else{$page_html='<div class="rps_page">';}
-		}
-		if($i%$cf5_rps['per_page'] == ($cf5_rps['per_page']-1)){$page_close='</div>';}
-			
-	    $slider=$slider.$page_html.'<div class="rps_item '.$selected.'">
-						<div class="h2div">'.$ltitle.'</div>
-					</div>'.$page_close;
-     $i++;}
-    
-	if($page_close=='' or empty($page_close)){$slider=$slider.'</div>';}
+	}
 	
-	$slider=$slider.'<div class="rps_nav">
-						<a id="rps_prev" class="rps_prev disabled"></a>
-						<a id="rps_next" class="rps_next"></a>
-				    </div>
-			</div>
-		</div>';
-		if($cf5_rps['support']=='0'){$support='';}
-		else{$support='<span class="rps_support"><a href="http://www.clickonf5.org/related-posts-slider" target="_blank" title="Related Posts Slider - Free WordPress Plugin">Related Posts Slider</a></span>';}
-		$sldr_title='<div class="rps_sldrtitle">'.$support.$cf5_rps['sldr_title'].'</div><div class="cf5_rps_cr"></div>';
-		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div><div class="cf5_rps_cr"></div></div>';
-      if($echo){
-		echo $rpsslider;
-		$rps_slider_shown = true;
-	  }
-	  else {
-	    $rps_slider_shown = true;
-	    return $rpsslider;
-	  }
-endif;
+//format of the slider	
+	$format = $cf5_rps['format'];
+	if(!empty($format) and $format) {
+	  $rps_func = 'cf5_rps_'.$format;
+	}
+	else {
+	  $rps_func = 'cf5_rps_default';
+	}
+	if(!function_exists($rps_func)) {
+	  $rps_func = 'cf5_rps_default';
+	}
+	return $rps_func($echo,$rps_posts);
 }
 
 function cf5_rps_automatic_insertion($content){
@@ -317,9 +213,83 @@ function cf5_rps_shortcode($atts) {
 	extract(shortcode_atts(array(
 	), $atts));
 
-	return get_related_posts_slider($echo=false);
+	if(is_singular()){
+	   return get_related_posts_slider($echo=false);
+	}
+	else{return '';}
 }
 add_shortcode('rps', 'cf5_rps_shortcode');
+
+function get_cf5_wp_rp_related_posts() {
+if(function_exists('wp_get_related_posts')):
+	global $wpdb, $post;
+	$wp_rp = get_option("wp_rp");
+	
+	$wp_rp_title = $wp_rp["wp_rp_title"];
+	
+	$exclude = explode(",",$wp_rp["wp_rp_exclude"]);	
+	if ( $exclude != '' ) {
+		$q = 'SELECT tt.term_id FROM '. $wpdb->term_taxonomy.'  tt, ' . $wpdb->term_relationships.' tr WHERE tt.taxonomy = \'category\' AND tt.term_taxonomy_id = tr.term_taxonomy_id AND tr.object_id = '.$post->ID;
+
+		$cats = $wpdb->get_results($q);
+		
+		foreach(($cats) as $cat) {
+			if (in_array($cat->term_id, $exclude) != false){
+				return;
+			}
+		}
+	}
+		
+	if(!$post->ID){return;}
+	$now = current_time('mysql', 1);
+	$tags = wp_get_post_tags($post->ID);
+	
+	$taglist = "'" . $tags[0]->term_id. "'";
+	
+	$tagcount = count($tags);
+	if ($tagcount > 1) {
+		for ($i = 1; $i < $tagcount; $i++) {
+			$taglist = $taglist . ", '" . $tags[$i]->term_id . "'";
+		}
+	}
+	
+	$limit = $wp_rp["wp_rp_limit"];
+	if ($limit) {
+		$limitclause = "LIMIT $limit";
+	}	else {
+		$limitclause = "LIMIT 10";
+	}
+	
+	$q = "SELECT p.ID, p.post_title, p.post_content,p.post_excerpt, p.post_date,  p.comment_count, count(t_r.object_id) as cnt FROM $wpdb->term_taxonomy t_t, $wpdb->term_relationships t_r, $wpdb->posts p WHERE t_t.taxonomy ='post_tag' AND t_t.term_taxonomy_id = t_r.term_taxonomy_id AND t_r.object_id  = p.ID AND (t_t.term_id IN ($taglist)) AND p.ID != $post->ID AND p.post_status = 'publish' AND p.post_date_gmt < '$now' GROUP BY t_r.object_id ORDER BY cnt DESC, p.post_date_gmt DESC $limitclause;";
+	
+	$related_posts = $wpdb->get_results($q);
+		
+	if (!$related_posts){
+		$wp_no_rp = $wp_rp["wp_no_rp"];
+		$wp_no_rp_text = $wp_rp["wp_no_rp_text"];
+	
+		if(!$wp_no_rp || ($wp_no_rp == "popularity" && !function_exists('akpc_most_popular'))) $wp_no_rp = "text";
+		
+		if($wp_no_rp == "text"){
+		}	else{
+			if($wp_no_rp == "random"){
+				$related_posts = wp_get_random_posts($limitclause);
+			}	elseif($wp_no_rp == "commented"){
+				$related_posts = wp_get_most_commented_posts($limitclause);
+			}	elseif($wp_no_rp == "popularity"){
+				$related_posts = wp_get_most_popular_posts($limitclause);
+			}
+			$wp_rp_title = $wp_no_rp_text;
+		}
+	}
+	
+	$rps_posts = array();
+	foreach ($related_posts as $related_post ){
+	  $rps_posts[]=$related_post->ID;
+    }
+	return $rps_posts;
+ endif;   
+}
 
 function get_cf5_yarpp_related_posts($type,$args,$reference_ID=false) {
 if(function_exists(yarpp_related)):
@@ -502,13 +472,30 @@ function cf5_rps_settings_page() {
 settings_fields('cf5_rps-group');
 $cf5_rps = get_option('cf5_rps_options');
 ?>
-<h2>Overall Slider Settings</h2> 
+<h2><?php _e('Overall Slider Settings','cf5_rps'); ?></h2> 
 <table class="form-table">
 
 <tr valign="top">
-<th scope="row"><label for="cf5_rps_options[stylesheet]">Select the style for your Slider</label></th> 
+    <th scope="row"><?php _e('Related Posts Plugin to use','cf5_rps'); ?><small><?php _e('(You need to install and activate the selected plugin in order to make RPS run.)','cf5_rps'); ?></small></th>
+    <td><select name="cf5_rps_options[plugin]" id="cf5_rps_plugin" >
+    <option value="yarpp" <?php if ($cf5_rps['plugin'] == "yarpp"){ echo "selected";}?> >YARPP</option>
+    <option value="wp_rp" <?php if ($cf5_rps['plugin'] == "wp_rp"){ echo "selected";}?> >WordPress Related Posts</option>
+    </td>
+</tr>
+
+<tr valign="top">
+    <th scope="row"><?php _e('Related Slider Format','cf5_rps'); ?><small><?php _e('(If you select other than "default", click save to see correct options.)','cf5_rps'); ?></small></th>
+    <td><select name="cf5_rps_options[format]" id="cf5_rps_format" >
+    <option value="default" <?php if ($cf5_rps['format'] == "default"){ echo "selected";}?> >Default</option>
+    <option value="h_carousel" <?php if ($cf5_rps['format'] == "h_carousel"){ echo "selected";}?> >Horizontal Carousel</option>
+    </select> &nbsp; &nbsp; <input type="submit" class="button-primary" value="<?php _e('Save') ?>" />
+    </td>
+</tr>
+
+<tr valign="top" <?php if($cf5_rps['format']!='default') {echo 'style="display:none;"';} ?>>
+<th scope="row"><label for="cf5_rps_options[stylesheet]"><?php _e('Select the style for your Slider','cf5_rps'); ?></label></th> 
 <td><select name="cf5_rps_options[stylesheet]" id="cf5_rps_stylesheet" >
-<?php 
+<?php
 $directory = WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/styles/';
 if ($handle = opendir($directory)) {
     while (false !== ($file = readdir($handle))) { 
@@ -518,70 +505,86 @@ if ($handle = opendir($directory)) {
     closedir($handle);
 }
 ?>
-</select><small>The CSS settings below are only applicable and visible in case you select 'default' stylesheet.</small></td></tr>
+</select><small><?php _e('The CSS settings below are only applicable and visible in case you select "default" stylesheet.','cf5_rps'); ?></small></td></tr>
+
+<tr valign="top" <?php if($cf5_rps['format']!='h_carousel') {echo 'style="display:none;"';} ?>>
+<th scope="row"><label for="cf5_rps_options[format_style]"><?php _e('Select the style for your Slider','cf5_rps'); ?></label></th> 
+<td>
+<?php $format_directory = WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/formats/h_carousel/styles/'; ?>
+<select name="cf5_rps_options[format_style]" id="cf5_rps_format_style" >
+<?php
+if ($handle = opendir($format_directory)) {
+    while (false !== ($file = readdir($handle))) { 
+     if($file != '.' and $file != '..') { ?>
+      <option value="<?php echo $file;?>" <?php if ($cf5_rps['format_style'] == $file){ echo "selected";}?> ><?php echo $file;?></option>
+ <?php  } }
+    closedir($handle);
+}
+?>
+</select><small><?php _e('The CSS settings below are only applicable and visible in case you select "default" style.','cf5_rps'); ?></small></td></tr>
 
 <tr valign="top">
-<th scope="row">No. of Posts in one group of List Section</th>
+<th scope="row"><?php _e('No. of Posts in one group of List Section/Visible Posts','cf5_rps'); ?></th>
 <td><input type="text" name="cf5_rps_options[per_page]" id="cf5_rps_no_posts" class="small-text" value="<?php echo $cf5_rps['per_page']; ?>" /></td>
 </tr>
 
-<tr valign="top">
-<th scope="row">Slider Height</th>
+<tr valign="top" <?php if($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default' ) echo 'style="display:none;"';?>>
+<th scope="row"><?php _e('Slider Height','cf5_rps'); ?></th>
 <td><input type="text" name="cf5_rps_options[height]" id="cf5_rps_height" class="small-text" value="<?php echo $cf5_rps['height']; ?>" />&nbsp;px</td>
 </tr>
 
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Background Color</th>
-    <td><input type="text" name="cf5_rps_options[bgcolor]" id="color_value_1" value="<?php echo $cf5_rps['bgcolor']; ?>" />&nbsp; <img id="color_picker_1" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_1"></div> <small>(If left empty, will pick inherited color)</small></td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Background Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[bgcolor]" id="color_value_1" value="<?php echo $cf5_rps['bgcolor']; ?>" />&nbsp; <img id="color_picker_1" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_1"></div> <small><?php _e('(If left empty, will pick inherited color)','cf5_rps'); ?></small></td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Foregound Color</th>
-    <td><input type="text" name="cf5_rps_options[fgcolor]" id="color_value_2" value="<?php echo $cf5_rps['fgcolor']; ?>" />&nbsp; <img id="color_picker_2" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_2"></div> </td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Foregound Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[fgcolor]" id="color_value_2" value="<?php echo $cf5_rps['fgcolor']; ?>" />&nbsp; <img id="color_picker_2" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_2"></div> </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Background Color for Hover Section</th>
-    <td><input type="text" name="cf5_rps_options[hvcolor]" id="color_value_3" value="<?php echo $cf5_rps['hvcolor']; ?>" />&nbsp; <img id="color_picker_3" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_3"></div> </td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Background Color for Hover Section','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[hvcolor]" id="color_value_3" value="<?php echo $cf5_rps['hvcolor']; ?>" />&nbsp; <img id="color_picker_3" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_3"></div> </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Text Color For Hover Section</th>
-    <td><input type="text" name="cf5_rps_options[hvtext_color]" id="color_value_9" value="<?php echo $cf5_rps['hvtext_color']; ?>" />&nbsp; <img id="color_picker_9" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_9"></div> </td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Text Color For Hover Section','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[hvtext_color]" id="color_value_9" value="<?php echo $cf5_rps['hvtext_color']; ?>" />&nbsp; <img id="color_picker_9" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_9"></div> </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Outer Border Thickness</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Outer Border Thickness','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[obrwidth]" id="cf5_rps_obrwidth" class="small-text" value="<?php echo $cf5_rps['obrwidth']; ?>" />&nbsp;px &nbsp;(put 0 if no border is required)</td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Outer Border Color</th>
-    <td><input type="text" name="cf5_rps_options[obrcolor]" id="color_value_4" value="<?php echo $cf5_rps['obrcolor']; ?>" />&nbsp; <img id="color_picker_4" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_4"></div></td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Outer Border Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[obrcolor]" id="color_value_4" value="<?php echo $cf5_rps['obrcolor']; ?>" />&nbsp; <img id="color_picker_4" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_4"></div></td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Inner Border Thickness</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Inner Border Thickness','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[ibrwidth]" id="cf5_rps_obrwidth" class="small-text" value="<?php echo $cf5_rps['ibrwidth']; ?>" />&nbsp;px &nbsp;(put 0 if no border is required)</td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Inner Border Color</th>
-    <td><input type="text" name="cf5_rps_options[ibrcolor]" id="color_value_5" value="<?php echo $cf5_rps['ibrcolor']; ?>" />&nbsp; <img id="color_picker_5" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_5"></div></td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Inner Border Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[ibrcolor]" id="color_value_5" value="<?php echo $cf5_rps['ibrcolor']; ?>" />&nbsp; <img id="color_picker_5" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_5"></div></td>
     </tr>
 
 </table> 
 
-<h2>Slider Title</h2> 
+<h2><?php _e('Slider Title','cf5_rps'); ?></h2> 
 <table class="form-table">
 
 <tr valign="top">
-<th scope="row">Slider Title Text</th>
+<th scope="row"><?php _e('Slider Title Text','cf5_rps'); ?></th>
 <td><input type="text" name="cf5_rps_options[sldr_title]" class="regular-text code" value="<?php echo $cf5_rps['sldr_title']; ?>" /></td>
 </tr>
 
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Title Font','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[stitle_font]" id="cf5_rps_stitle_font" >
     <option value="Arial,Helvetica,sans-serif" <?php if ($cf5_rps['stitle_font'] == "Arial,Helvetica,sans-serif"){ echo "selected";}?> >Arial,Helvetica,sans-serif</option>
     <option value="Calibri,Times,serif" <?php if ($cf5_rps['stitle_font'] == "Calibri,Times,serif"){ echo "selected";}?> >Calibri,Times,serif</option>
@@ -597,18 +600,18 @@ if ($handle = opendir($directory)) {
     </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Title Font Color</th>
-    <td><input type="text" name="cf5_rps_options[stitle_color]" id="color_value_10" value="<?php echo $cf5_rps['stitle_color']; ?>" />&nbsp; <img id="color_picker_10" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_10"></div></td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Title Font Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[stitle_color]" id="color_value_10" value="<?php echo $cf5_rps['stitle_color']; ?>" />&nbsp; <img id="color_picker_10" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_10"></div></td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Title Font Size</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Title Font Size','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[stitle_size]" id="cf5_rps_stitle_size" class="small-text" value="<?php echo $cf5_rps['stitle_size']; ?>" />&nbsp;px</td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Title Font Weight</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Title Font Weight','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[stitle_weight]" id="cf5_rps_stitle_weight" >
     <option value="bold" <?php if ($cf5_rps['stitle_weight'] == "bold"){ echo "selected";}?> >Bold</option>
     <option value="normal" <?php if ($cf5_rps['stitle_weight'] == "normal"){ echo "selected";}?> >Normal</option>
@@ -616,8 +619,8 @@ if ($handle = opendir($directory)) {
     </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Slider Title Font Style</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Slider Title Font Style','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[stitle_style]" id="cf5_rps_stitle_style" >
     <option value="italic" <?php if ($cf5_rps['stitle_style'] == "italic"){ echo "selected";}?> >Italic</option>
     <option value="normal" <?php if ($cf5_rps['stitle_style'] == "normal"){ echo "selected";}?> >Normal</option>
@@ -626,62 +629,62 @@ if ($handle = opendir($directory)) {
     </tr>
 </table>
 
-<h2>Thumbnail Image</h2> 
-<p>Settings for the thumbnail image in Preview Section</p> 
+<h2><?php _e('Thumbnail Image','cf5_rps'); ?></h2> 
+<p><?php _e('Settings for the thumbnail image in Preview Section','cf5_rps'); ?></p> 
 <table class="form-table">
 
 <tr valign="top"> 
-<th scope="row">Image Pick Preferences <small>(The first one is having priority over second, the second on third and so on. Atleast select one option!)</small></th> 
-<td><fieldset><legend class="screen-reader-text"><span>Image Pick Sequence <small>(The first one is having priority over second, the second having priority on third and so on)</small> </span></legend> 
-<input name="cf5_rps_options[img_pick][0]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][0]); ?>  /> Use Custom Field/Key &nbsp; &nbsp; 
-<input type="text" name="cf5_rps_options[img_pick][1]" class="text" value="<?php echo $cf5_rps['img_pick'][1]; ?>" /> Name of the Custom Field/Key
+<th scope="row"><?php _e('Image Pick Preferences','cf5_rps'); ?> <small><?php _e('(The first one is having priority over second, the second on third and so on. Atleast select one option!)','cf5_rps'); ?></small></th> 
+<td><fieldset><legend class="screen-reader-text"><span><?php _e('Image Pick Sequence','cf5_rps'); ?> <small><?php _e('(The first one is having priority over second, the second having priority on third and so on)','cf5_rps'); ?></small> </span></legend> 
+<input name="cf5_rps_options[img_pick][0]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][0]); ?>  /> <?php _e('Use Custom Field/Key','cf5_rps'); ?> &nbsp; &nbsp; 
+<input type="text" name="cf5_rps_options[img_pick][1]" class="text" value="<?php echo $cf5_rps['img_pick'][1]; ?>" /> <?php _e('Name of the Custom Field/Key','cf5_rps'); ?> 
 <br />
-<input name="cf5_rps_options[img_pick][2]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][2]); ?>  /> Use Featured Post/Thumbnail (Wordpress 3.0 +  feature)&nbsp; <br />
-<input name="cf5_rps_options[img_pick][3]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][3]); ?>  /> Consider Images attached to the post &nbsp; &nbsp; 
-<input type="text" name="cf5_rps_options[img_pick][4]" class="small-text" value="<?php echo $cf5_rps['img_pick'][4]; ?>" /> Order of the Image attachment to pick &nbsp; <br />
-<input name="cf5_rps_options[img_pick][5]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][5]); ?>  /> Scan images from the post, in case there is no attached image to the post&nbsp; 
+<input name="cf5_rps_options[img_pick][2]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][2]); ?>  /> <?php _e('Use Featured Post/Thumbnail (Wordpress 3.0 +  feature)','cf5_rps'); ?> &nbsp; <br />
+<input name="cf5_rps_options[img_pick][3]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][3]); ?>  /> <?php _e('Consider Images attached to the post','cf5_rps'); ?>  &nbsp; &nbsp; 
+<input type="text" name="cf5_rps_options[img_pick][4]" class="small-text" value="<?php echo $cf5_rps['img_pick'][4]; ?>" /> <?php _e('Order of the Image attachment to pick','cf5_rps'); ?>  &nbsp; <br />
+<input name="cf5_rps_options[img_pick][5]" type="checkbox" value="1" <?php checked('1', $cf5_rps['img_pick'][5]); ?>  /> <?php _e('Scan images from the post, in case there is no attached image to the post','cf5_rps'); ?> &nbsp; 
 </fieldset></td> 
 </tr> 
 
 <tr valign="top">
-<th scope="row">Wordpress Image Extract Size</th>
+<th scope="row"><?php _e('Wordpress Image Extract Size','cf5_rps'); ?> </th>
 <td><select name="cf5_rps_options[crop]" id="cf5_rps_img_crop" >
-<option value="0" <?php if ($cf5_rps['crop'] == "0"){ echo "selected";}?> >Full</option>
-<option value="1" <?php if ($cf5_rps['crop'] == "1"){ echo "selected";}?> >Large</option>
-<option value="2" <?php if ($cf5_rps['crop'] == "2"){ echo "selected";}?> >Medium</option>
-<option value="3" <?php if ($cf5_rps['crop'] == "3"){ echo "selected";}?> >Thumbnail</option>
+<option value="0" <?php if ($cf5_rps['crop'] == "0"){ echo "selected";}?> ><?php _e('Full','cf5_rps'); ?></option>
+<option value="1" <?php if ($cf5_rps['crop'] == "1"){ echo "selected";}?> ><?php _e('Large','cf5_rps'); ?></option>
+<option value="2" <?php if ($cf5_rps['crop'] == "2"){ echo "selected";}?> ><?php _e('Medium','cf5_rps'); ?></option>
+<option value="3" <?php if ($cf5_rps['crop'] == "3"){ echo "selected";}?> ><?php _e('Thumbnail','cf5_rps'); ?></option>
 </select>
-<small>This is because, for every image upload to the media gallery WordPress creates four sizes of the same image. So you can choose which to load in the slider and then specify the actual size.</small>
+<small><?php _e('This is because, for every image upload to the media gallery WordPress creates four sizes of the same image. So you can choose which to load in the slider and then specify the actual size.','cf5_rps'); ?></small>
 </td>
 </tr>
 
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Align to</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Align to','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[img_align]" id="cf5_rps_img_align" >
-    <option value="left" <?php if ($cf5_rps['img_align'] == "left"){ echo "selected";}?> >Left</option>
-    <option value="right" <?php if ($cf5_rps['img_align'] == "right"){ echo "selected";}?> >Right</option>
-    <option value="none" <?php if ($cf5_rps['img_align'] == "none"){ echo "selected";}?> >Center</option>
+    <option value="left" <?php if ($cf5_rps['img_align'] == "left"){ echo "selected";}?> ><?php _e('Left','cf5_rps'); ?></option>
+    <option value="right" <?php if ($cf5_rps['img_align'] == "right"){ echo "selected";}?> ><?php _e('Right','cf5_rps'); ?></option>
+    <option value="none" <?php if ($cf5_rps['img_align'] == "none"){ echo "selected";}?> ><?php _e('Center','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>> 
-    <th scope="row"><label for="cf5_rps_options[img_width]">Image Width</label></th> 
-    <td><input type="text" name="cf5_rps_options[img_width]" class="small-text" value="<?php echo $cf5_rps['img_width']; ?>" />&nbsp;%&nbsp;&nbsp; </td> 
+    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default' ) echo 'style="display:none;"';?>> 
+    <th scope="row"><label for="cf5_rps_options[img_width]"><?php _e('Image Width','cf5_rps'); ?></label></th> 
+    <td><input type="text" name="cf5_rps_options[img_width]" class="small-text" value="<?php echo $cf5_rps['img_width']; ?>" />&nbsp;<?php _e('(% for "default" format and "px" for other formats of slider)','cf5_rps'); ?>&nbsp;&nbsp; </td> 
     </tr> 
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Maximum Height of the Image</th>
-    <td><input type="text" name="cf5_rps_options[img_height]" class="small-text" value="<?php echo $cf5_rps['img_height']; ?>" />&nbsp;px &nbsp;&nbsp; (This is necessary in order to keep the maximum image height in control)</td>
+    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default' ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Maximum Height/Height of the Image','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[img_height]" class="small-text" value="<?php echo $cf5_rps['img_height']; ?>" />&nbsp;px &nbsp;&nbsp; <?php _e('(This is necessary in order to keep the maximum image height in control)','cf5_rps'); ?></td>
     </tr>
 
 </table>
 
-<h2>List Section</h2> 
+<h2><?php _e('List Section','cf5_rps'); ?></h2> 
 <table class="form-table">
 
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Font</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Font','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ltitle_font]" id="cf5_rps_ltitle_font" >
     <option value="Arial,Helvetica,sans-serif" <?php if ($cf5_rps['ltitle_font'] == "Arial,Helvetica,sans-serif"){ echo "selected";}?> >Arial,Helvetica,sans-serif</option>
     <option value="Calibri,Times,serif" <?php if ($cf5_rps['ltitle_font'] == "Calibri,Times,serif"){ echo "selected";}?> >Calibri,Times,serif</option>
@@ -697,46 +700,46 @@ if ($handle = opendir($directory)) {
     </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Font Color</th>
-    <td><input type="text" name="cf5_rps_options[ltitle_color]" id="color_value_6" value="<?php echo $cf5_rps['ltitle_color']; ?>" />&nbsp; <img id="color_picker_6" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_6"></div></td>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Font Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[ltitle_color]" id="color_value_6" value="<?php echo $cf5_rps['ltitle_color']; ?>" />&nbsp; <img id="color_picker_6" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_6"></div></td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Font Size</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Font Size','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[ltitle_size]" id="cf5_rps_ltitle_size" class="small-text" value="<?php echo $cf5_rps['ltitle_size']; ?>" />&nbsp;px</td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Font Weight</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Font Weight','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ltitle_weight]" id="cf5_rps_ltitle_weight" >
-    <option value="bold" <?php if ($cf5_rps['ltitle_weight'] == "bold"){ echo "selected";}?> >Bold</option>
-    <option value="normal" <?php if ($cf5_rps['ltitle_weight'] == "normal"){ echo "selected";}?> >Normal</option>
+    <option value="bold" <?php if ($cf5_rps['ltitle_weight'] == "bold"){ echo "selected";}?> ><?php _e('Bold','cf5_rps'); ?></option>
+    <option value="normal" <?php if ($cf5_rps['ltitle_weight'] == "normal"){ echo "selected";}?> ><?php _e('Normal','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
     
-    <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Font Style</th>
+    <tr valign="top" <?php if(($cf5_rps['stylesheet']!='default' and $cf5_rps['format']=='default') or ($cf5_rps['format_style']!='default' and $cf5_rps['format']!='default') ) echo 'style="display:none;"';?>>
+    <th scope="row"><?php _e('Font Style','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ltitle_style]" id="cf5_rps_ltitle_style" >
-    <option value="italic" <?php if ($cf5_rps['ltitle_style'] == "italic"){ echo "selected";}?> >Italic</option>
-    <option value="normal" <?php if ($cf5_rps['ltitle_style'] == "normal"){ echo "selected";}?> >Normal</option>
+    <option value="italic" <?php if ($cf5_rps['ltitle_style'] == "italic"){ echo "selected";}?> ><?php _e('Italic','cf5_rps'); ?></option>
+    <option value="normal" <?php if ($cf5_rps['ltitle_style'] == "normal"){ echo "selected";}?> ><?php _e('Normal','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
 
 <tr valign="top">
-<th scope="row">Max words in List Title</th>
-<td><input type="text" name="cf5_rps_options[ltitle_words]" id="cf5_rps_ltitle_words" class="small-text" value="<?php echo $cf5_rps['ltitle_words']; ?>" />&nbsp;words</td>
+<th scope="row"><?php _e('Max words in List Title','cf5_rps'); ?></th>
+<td><input type="text" name="cf5_rps_options[ltitle_words]" id="cf5_rps_ltitle_words" class="small-text" value="<?php echo $cf5_rps['ltitle_words']; ?>" />&nbsp;<?php _e('words','cf5_rps'); ?></td>
 </tr>
 
 </table>
 
-<h2>Preview Section</h2> 
-<table class="form-table">
+<h2 <?php if($cf5_rps['format']!='default' ) echo 'style="display:none;"';?>><?php _e('Preview Section','cf5_rps'); ?></h2> 
+<table class="form-table" <?php if($cf5_rps['format']!='default' ) echo 'style="display:none;"';?>>
 
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font</th>
+    <th scope="row"><?php _e('Title Font','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ptitle_font]" id="cf5_rps_ptitle_font" >
     <option value="Arial,Helvetica,sans-serif" <?php if ($cf5_rps['ptitle_font'] == "Arial,Helvetica,sans-serif"){ echo "selected";}?> >Arial,Helvetica,sans-serif</option>
     <option value="Calibri,Times,serif" <?php if ($cf5_rps['ptitle_font'] == "Calibri,Times,serif"){ echo "selected";}?> >Calibri,Times,serif</option>
@@ -753,35 +756,35 @@ if ($handle = opendir($directory)) {
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font Color</th>
-    <td><input type="text" name="cf5_rps_options[ptitle_color]" id="color_value_7" value="<?php echo $cf5_rps['ptitle_color']; ?>" />&nbsp; <img id="color_picker_7" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_7"></div></td>
+    <th scope="row"><?php _e('Title Font Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[ptitle_color]" id="color_value_7" value="<?php echo $cf5_rps['ptitle_color']; ?>" />&nbsp; <img id="color_picker_7" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_7"></div></td>
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font Size</th>
+    <th scope="row"><?php _e('Title Font Size','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[ptitle_size]" id="cf5_rps_ptitle_size" class="small-text" value="<?php echo $cf5_rps['ptitle_size']; ?>" />&nbsp;px</td>
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font Weight</th>
+    <th scope="row"><?php _e('Title Font Weight','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ptitle_weight]" id="cf5_rps_ptitle_weight" >
-    <option value="bold" <?php if ($cf5_rps['ptitle_weight'] == "bold"){ echo "selected";}?> >Bold</option>
-    <option value="normal" <?php if ($cf5_rps['ptitle_weight'] == "normal"){ echo "selected";}?> >Normal</option>
+    <option value="bold" <?php if ($cf5_rps['ptitle_weight'] == "bold"){ echo "selected";}?> ><?php _e('Bold','cf5_rps'); ?></option>
+    <option value="normal" <?php if ($cf5_rps['ptitle_weight'] == "normal"){ echo "selected";}?> ><?php _e('Normal','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Title Font Style</th>
+    <th scope="row"><?php _e('Title Font Style','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[ptitle_style]" id="cf5_rps_ptitle_style" >
-    <option value="italic" <?php if ($cf5_rps['ptitle_style'] == "italic"){ echo "selected";}?> >Italic</option>
-    <option value="normal" <?php if ($cf5_rps['ptitle_style'] == "normal"){ echo "selected";}?> >Normal</option>
+    <option value="italic" <?php if ($cf5_rps['ptitle_style'] == "italic"){ echo "selected";}?> ><?php _e('Italic','cf5_rps'); ?></option>
+    <option value="normal" <?php if ($cf5_rps['ptitle_style'] == "normal"){ echo "selected";}?> ><?php _e('Normal','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Content Font</th>
+    <th scope="row"><?php _e('Content Font','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[pcontent_font]" id="cf5_rps_pcontent_font" >
     <option value="Arial,Helvetica,sans-serif" <?php if ($cf5_rps['pcontent_font'] == "Arial,Helvetica,sans-serif"){ echo "selected";}?> >Arial,Helvetica,sans-serif</option>
     <option value="Calibri,Times,serif" <?php if ($cf5_rps['pcontent_font'] == "Calibri,Times,serif"){ echo "selected";}?> >Calibri,Times,serif</option>
@@ -798,79 +801,81 @@ if ($handle = opendir($directory)) {
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Content Font Color</th>
-    <td><input type="text" name="cf5_rps_options[pcontent_color]" id="color_value_8" value="<?php echo $cf5_rps['pcontent_color']; ?>" />&nbsp; <img id="color_picker_8" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="Pick the color of your choice" /><div class="color-picker-wrap" id="colorbox_8"></div></td>
+    <th scope="row"><?php _e('Content Font Color','cf5_rps'); ?></th>
+    <td><input type="text" name="cf5_rps_options[pcontent_color]" id="color_value_8" value="<?php echo $cf5_rps['pcontent_color']; ?>" />&nbsp; <img id="color_picker_8" src="<?php echo cf5_rps_url( 'images/color_picker.png' ); ?>" alt="<?php _e('Pick the color of your choice','cf5_rps'); ?>" /><div class="color-picker-wrap" id="colorbox_8"></div></td>
     </tr>
     
     <tr valign="top" <?php if($cf5_rps['stylesheet']!='default') echo 'style="display:none;"';?>>
-    <th scope="row">Content Font Size</th>
+    <th scope="row"><?php _e('Content Font Size','cf5_rps'); ?></th>
     <td><input type="text" name="cf5_rps_options[pcontent_size]" id="cf5_rps_pcontent_size" class="small-text" value="<?php echo $cf5_rps['pcontent_size']; ?>" />&nbsp;px</td>
     </tr>
     
 <tr valign="top">
-<th scope="row">Pick content From</th>
+<th scope="row"><?php _e('Pick content From','cf5_rps'); ?></th>
 <td><select name="cf5_rps_options[pcontent_from]" id="cf5_rps_content_from" >
-<option value="preview_content" <?php if ($cf5_rps['pcontent_from'] == "preview_content"){ echo "selected";}?> >preview_content Custom field</option>
-<option value="excerpt" <?php if ($cf5_rps['pcontent_from'] == "excerpt"){ echo "selected";}?> >Post Excerpt</option>
-<option value="content" <?php if ($cf5_rps['pcontent_from'] == "content"){ echo "selected";}?> >From Content</option>
+<option value="preview_content" <?php if ($cf5_rps['pcontent_from'] == "preview_content"){ echo "selected";}?> ><?php _e('preview_content Custom field','cf5_rps'); ?></option>
+<option value="excerpt" <?php if ($cf5_rps['pcontent_from'] == "excerpt"){ echo "selected";}?> ><?php _e('Post Excerpt','cf5_rps'); ?></option>
+<option value="content" <?php if ($cf5_rps['pcontent_from'] == "content"){ echo "selected";}?> ><?php _e('From Content','cf5_rps'); ?></option>
 </select>
 </td>
 </tr>
 
 <tr valign="top">
-<th scope="row">Max words in Preview Content</th>
-<td><input type="text" name="cf5_rps_options[pcontent_words]" id="cf5_rps_pcontent_words" class="small-text" value="<?php echo $cf5_rps['pcontent_words']; ?>" />&nbsp;words</td>
+<th scope="row"><?php _e('Max words in Preview Content','cf5_rps'); ?></th>
+<td><input type="text" name="cf5_rps_options[pcontent_words]" id="cf5_rps_pcontent_words" class="small-text" value="<?php echo $cf5_rps['pcontent_words']; ?>" />&nbsp;<?php _e('words','cf5_rps'); ?></td>
 </tr>
 
 <tr valign="top">
-<th scope="row">Show read more (continue reading) section</th>
+<th scope="row"><?php _e('Show read more (continue reading) section','cf5_rps'); ?></th>
 <td><select name="cf5_rps_options[no_more]" id="target" >
-<option value="0" <?php if ($cf5_rps['no_more'] == "0"){ echo "selected";}?> >Show</option>
-<option value="1" <?php if ($cf5_rps['no_more'] == "1"){ echo "selected";}?> >Do not show</option>
+<option value="0" <?php if ($cf5_rps['no_more'] == "0"){ echo "selected";}?> ><?php _e('Show','cf5_rps'); ?></option>
+<option value="1" <?php if ($cf5_rps['no_more'] == "1"){ echo "selected";}?> ><?php _e('Do not show','cf5_rps'); ?></option>
 </select>
 </td>
 </tr>
 
 <tr valign="top">
-<th scope="row">Continue Reading Text</th>
+<th scope="row"><?php _e('Continue Reading Text','cf5_rps'); ?></th>
 <td><input type="text" name="cf5_rps_options[more]" class="regular-text code" value="<?php echo $cf5_rps['more']; ?>" /></td>
 </tr>
 
 <tr valign="top">
-<th scope="row">Target attribute for the continue reading link</th>
-<td><select name="cf5_rps_options[target]" id="target" >
-<option value="_self" <?php if ($cf5_rps['target'] == "_self"){ echo "selected";}?> >_self</option>
-<option value="_blank" <?php if ($cf5_rps['target'] == "_blank"){ echo "selected";}?> >_blank</option>
-</select>
-</td>
-</tr>
-
-<tr valign="top">
-<th scope="row">Retain these html tags</th>
-<td><input type="text" name="cf5_rps_options[allowable_tags]" class="regular-text code" value="<?php echo $cf5_rps['allowable_tags']; ?>" />&nbsp;(read <a href="http://www.clickonf5.org/related-posts-slider" title="how to retain html like line breaks and links in the Related Posts Slider" target="_blank">Usage section of the plugin page</a> to know more)</td>
+<th scope="row"><?php _e('Retain these html tags','cf5_rps'); ?></th>
+<td><input type="text" name="cf5_rps_options[allowable_tags]" class="regular-text code" value="<?php echo $cf5_rps['allowable_tags']; ?>" />&nbsp;<?php _e('(read','cf5_rps'); ?> <a href="http://www.clickonf5.org/related-posts-slider" title="<?php _e('how to retain html like line breaks and links in the Related Posts Slider','cf5_rps'); ?>" target="_blank"><?php _e('Usage section of the plugin page','cf5_rps'); ?></a> <?php _e('to know more)','cf5_rps'); ?></td>
 </tr>
 
 </table>
 
-<h2>Manual/Automatic Insertion</h2> 
-<small>By default the related posts slider is inserted automatically below the content area of the post. But you can select manual insertion (either using templte tag or shortcode or widget) or can select to insert it automatically above the content area of the post.</small>
 <table class="form-table">
     <tr valign="top">
-    <th scope="row">Insert the slider</th>
+    <th scope="row"><?php _e('Target attribute for the continue reading link/post permalink','cf5_rps'); ?></th>
+    <td><select name="cf5_rps_options[target]" id="target" >
+    <option value="_self" <?php if ($cf5_rps['target'] == "_self"){ echo "selected";}?> >_self</option>
+    <option value="_blank" <?php if ($cf5_rps['target'] == "_blank"){ echo "selected";}?> >_blank</option>
+    </select>
+    </td>
+    </tr>
+</table>
+
+<h2><?php _e('Manual/Automatic Insertion','cf5_rps'); ?></h2> 
+<small><?php _e('By default the related posts slider is inserted automatically below the content area of the post. But you can select manual insertion (either using templte tag or shortcode or widget) or can select to insert it automatically above the content area of the post.','cf5_rps'); ?></small>
+<table class="form-table">
+    <tr valign="top">
+    <th scope="row"><?php _e('Insert the slider','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[insert]" id="cf5_rps_insert" >
-    <option value="content_down" <?php if ($cf5_rps['insert'] == "content_down"){ echo "selected";}?> >Below the Content</option>
-    <option value="content_up" <?php if ($cf5_rps['insert'] == "content_up"){ echo "selected";}?> >Above the Content</option>
-    <option value="manual" <?php if ($cf5_rps['insert'] == "manual"){ echo "selected";}?> >Manually</option>
+    <option value="content_down" <?php if ($cf5_rps['insert'] == "content_down"){ echo "selected";}?> ><?php _e('Below the Content','cf5_rps'); ?></option>
+    <option value="content_up" <?php if ($cf5_rps['insert'] == "content_up"){ echo "selected";}?> ><?php _e('Above the Content','cf5_rps'); ?></option>
+    <option value="manual" <?php if ($cf5_rps['insert'] == "manual"){ echo "selected";}?> ><?php _e('Manually','cf5_rps'); ?></option>
     </select>
     </td>
     </tr>
     
     <tr valign="top">
-    <th scope="row">Support 'Related Posts Slider'</th>
+    <th scope="row"><?php _e('Support "Related Posts Slider"','cf5_rps'); ?></th>
     <td><select name="cf5_rps_options[support]" id="support" >
-    <option value="0" <?php if ($cf5_rps['support'] == "0"){ echo "selected";}?> >No</option>
-    <option value="1" <?php if ($cf5_rps['support'] == "1"){ echo "selected";}?> >Yes</option>
-    </select><small>Share the word, in case you select 'No', please consider donating and help the development!</small>
+    <option value="1" <?php if ($cf5_rps['support'] == "1"){ echo "selected";}?> ><?php _e('Yes','cf5_rps'); ?></option>
+    <option value="0" <?php if ($cf5_rps['support'] == "0"){ echo "selected";}?> ><?php _e('No','cf5_rps'); ?></option>
+    </select><small><?php _e('Share the word, in case you select "No", please consider donating and help the development!','cf5_rps'); ?></small>
     </td>
     </tr>
     
@@ -887,20 +892,20 @@ if ($handle = opendir($directory)) {
 
    <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
-			  <h3 class="hndle"><span>About this Plugin:</span></h3> 
+			  <h3 class="hndle"><span><?php _e('About this Plugin:','cf5_rps'); ?></span></h3> 
 			  <div class="inside">
                 <ul>
-                <li><a href="http://www.clickonf5.org/related-posts-slider" title="Related Posts Slider WP Plugin Homepage" >Plugin Homepage</a></li>
-                <li><a href="http://www.clickonf5.org/" title="Visit Internet Techies" >Plugin Parent Site</a></li>
-                <li><a href="http://www.clickonf5.org/about/tejaswini" title="Related Posts Slider WP Plugin Author Page" >About the Author</a></li>
-                <li><a href="http://www.clickonf5.org/go/donate-wp-plugins/" title="Donate if you liked the plugin and support in enhancing this plugin and creating new plugins" >Donate with Paypal</a></li>
+                <li><a href="http://www.clickonf5.org/related-posts-slider" title="Related Posts Slider WP Plugin Homepage" ><?php _e('Plugin Homepage','cf5_rps'); ?></a></li>
+                <li><a href="http://www.clickonf5.org/" title="Visit Internet Techies" ><?php _e('Plugin Parent Site','cf5_rps'); ?></a></li>
+                <li><a href="http://www.clickonf5.org/about/tejaswini" title="Related Posts Slider WP Plugin Author Page" ><?php _e('About the Author','cf5_rps'); ?></a></li>
+                <li><a href="http://www.clickonf5.org/go/donate-wp-plugins/" title="<?php _e('Donate if you liked the plugin and support in enhancing this plugin and creating new plugins','cf5_rps'); ?>" ><?php _e('Donate with Paypal','cf5_rps'); ?></a></li>
                 </ul> 
               </div> 
 			</div> 
      </div>
      <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
-			  <h3 class="hndle"><span></span>Our Facebook Fan Page</h3> 
+			  <h3 class="hndle"><span></span><?php _e('Our Facebook Fan Page','cf5_rps'); ?></h3> 
 			  <div class="inside">
                 <script type="text/javascript" src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_GB"></script><script type="text/javascript">FB.init("2aeebe9fb014836a6810ec4426d26f7e");</script><fb:fan profile_id="127760528543" stream="" connections="8" width="270" height="250"></fb:fan>
               </div> 
@@ -909,13 +914,28 @@ if ($handle = opendir($directory)) {
      
      <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
-			  <h3 class="hndle"><span>Latest on Internet Techies</span></h3> 
+			  <h3 class="hndle"><span><?php _e('Latest on Internet Techies','cf5_rps'); ?></span></h3> 
 			  <div class="inside">
-                <?php $postsarr = cf5_rps_parse_rss_rand('http://www.clickonf5.org/feed','8'); 
+                <?php $postsarr = cf5_rps_parse_rss_rand('http://www.clickonf5.org/feed','5'); 
 		        if($postsarr) {?>
                 <ul>
                 <?php foreach($postsarr as $itpost) { ?>
-                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="Read more about <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
+                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="<?php _e('Read more about','cf5_rps'); ?> <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
+                <?php } ?>
+                </ul> 
+                <?php } ?>
+              </div> 
+			</div> 
+     </div>
+     <div id="side-info-column" class="inner-sidebar"> 
+			<div class="postbox"> 
+			  <h3 class="hndle"><span><?php _e('Latest on SWS','cf5_rps'); ?></span></h3> 
+			  <div class="inside">
+                <?php $postsarr = cf5_rps_parse_rss_rand('http://www.staenzwebsolutions.com/feed','4'); 
+		        if($postsarr) {?>
+                <ul>
+                <?php foreach($postsarr as $itpost) { ?>
+                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="<?php _e('Read more about','cf5_rps'); ?> <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
                 <?php } ?>
                 </ul> 
                 <?php } ?>
@@ -923,14 +943,16 @@ if ($handle = opendir($directory)) {
 			</div> 
      </div>
 
+
      <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
-			  <h3 class="hndle"><span>Credits:</span></h3> 
+			  <h3 class="hndle"><span><?php _e('Credits:','cf5_rps'); ?></span></h3> 
 			  <div class="inside">
                 <ul>
                 <li><a href="http://tympanus.net/codrops/2010/10/03/compact-news-previewer/" title="Compact News Previewer with jQuery" >Compact News Previewer</a></li>
                 <li><a href="http://acko.net/dev/farbtastic" title="Farbtastic Color Picker by Steven Wittens" >Farbtastic Color Picker</a></li>
                 <li><a href="http://jquery.com/" title="jQuery JavaScript Library - John Resig" >jQuery JavaScript Library</a></li>
+                <li><a href="http://sorgalla.com/jcarousel/" title="Riding carousels with jQuery" >jCarousel</a></li>
                 <li><a href="http://codex.wordpress.org/Main_Page" title="WordPress Codex" >WordPress Codex</a></li>
                 </ul> 
               </div> 
