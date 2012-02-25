@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.3.1
 Stable tag: 2.0
 
-Related posts slider creates a very attractive slider of the related content from the same WordPress site/blog. 
+Related posts slider creates a very attractive slider of the related content from the same WordPress site or blog. 
 
 == Description ==
 
