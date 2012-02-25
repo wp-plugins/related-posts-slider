@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.3.1
 Stable tag: 2.0
 
-Related posts slider creates a very attractive slider of the related content from the same WordPress site/blog. 
+Related posts slider creates a very attractive slider of the related content from the same WordPress site or blog. 
 
 == Description ==
 
@@ -26,7 +26,7 @@ The slider is a lightweight jQuery implementation of the related post functional
 
 = Premium Sliders =
 
-If you are looking for designer, easy to install featured content slider (slideshow) for your WordPress site, try [SliderVilla] (http://slidervilla.com/). Some common features of SliderVilla sliders are,
+If you are looking for designer, easy to install featured content slider (slideshow) for your WordPress site, try [SliderVilla](http://slidervilla.com/) . Some common features of SliderVilla sliders are,
 
 * Multiple Sliders on Single Page
 * Different content aut-fetching based on category, publish date or custom choice
