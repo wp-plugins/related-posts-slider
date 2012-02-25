@@ -29,7 +29,7 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","1.3",false);
+define("CF5_RPS_VER","2.0",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 if ( ! defined( 'CF5_RPS_FORMAT_DIR' ) )
 	define( 'CF5_RPS_FORMAT_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/formats/h_carousel/styles/' );
