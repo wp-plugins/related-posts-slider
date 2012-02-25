@@ -4,21 +4,20 @@
 }
 .rps_sldrtitle{
     font-family:Georgia, "Times New Roman", Times, serif;
-	font-size:16px;
+	font-size:15px;
 	font-weight:bold;
 	font-style:normal;
 	color:#444;
-	margin:5px 0;
 }
 .rps_wrapper{
     clear:both;
-	height:270px;
+	height:230px;
 	position:relative;
 	color:#444;
 	overflow:hidden;
 	padding:5px;
 	border:0px solid #ccc;
-	background-color:#ededed;
+	background-color:transparent;
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
 	border-radius:5px;
@@ -61,7 +60,7 @@
 }
 .rps_content{
 	border:1px solid #ededed;
-	top:280px;/*5*/
+	top:260px;/*5*/
 	left:5px;
 	padding:5px 10px 0 10px;
 	position:absolute;
@@ -72,8 +71,13 @@
 	border-radius:5px;
 }
 img.rps_thumb{
-	width:100%;
+	-moz-box-shadow:1px 1px 4px #000;
+	-webkit-box-shadow:1px 1px 4px #000;
+	box-shadow:1px 1px 4px #000;
+	width:50%;
 	max-height:120px;
+	float:right;
+	margin:0 0 5px 5px !important;
 }
 .rps_content div.pdiv{
 	padding:4px 0;

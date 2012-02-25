@@ -191,8 +191,8 @@ endif;
 
 function cf5_rps_wp_init_h_carousel(){
     global $cf5_rps;
-	$css="formats/h_carousel/styles/".$cf5_rps['format_style'].'/style.css';
-	$js="formats/h_carousel/js/jquery.jcarousel.min.js";
+	$css='formats/h_carousel/styles/'.$cf5_rps['format_style'].'/style.css';
+	$js="formats/h_carousel/js/rps.js";
 	wp_enqueue_style( 'cf5_rps_h_carousel_css', cf5_rps_url( $css ),false, CF5_RPS_VER, 'all'); 
 	wp_enqueue_script( 'cf5_rps_h_carousel_js', cf5_rps_url( $js ),array('jquery'), CF5_RPS_VER, true); 
 }
@@ -200,23 +200,39 @@ function cf5_rps_wp_head_h_carousel() {
     global $cf5_rps; 
 	$cf5_options=$cf5_rps;
 	extract($cf5_options);
+	?>
+	    <script type="text/javascript"> 
+		jQuery(document).ready(function() {
+			jQuery('#rps_hcarousel').cf5Rps({
+				items: {
+					visible: <?php echo $cf5_rps['per_page']; ?>
+				},
+				scroll: {
+					items: <?php echo $cf5_rps['scroll']; ?>,
+					pauseOnHover: true
+				},
+				prev: {	
+					button	: "#rps_prev",
+					key		: "left"
+				},
+				next: { 
+					button	: "#rps_next",
+					key		: "right"
+				},
+				auto: 4000
+			});
+		});
+	</script> 
+	<?php
+	
   if($cf5_rps['format_style']=='default'):
 	?>
-	<style type="text/css">.rps_sldrtitle{font-family:<?php echo $cf5_rps['stitle_font'];?>;font-size:<?php echo $cf5_rps['stitle_size'];?>px;font-weight:<?php echo $cf5_rps['stitle_weight'];?>;font-style:<?php echo $cf5_rps['stitle_style'];?>;<?php if($stitle_color and !empty($stitle_color)){?>color:<?php echo $cf5_rps['stitle_color'];?>;<?php } ?>}.rps_wrapper{height:<?php echo $cf5_rps['height'];?>px;<?php if($bgcolor and !empty($bgcolor)){?>background:<?php echo $cf5_rps['bgcolor'];?>;<?php } ?><?php if($ltitle_color and !empty($ltitle_color)){?>color:<?php echo $cf5_rps['ltitle_color'];?>;<?php } ?>border:<?php echo $cf5_rps['obrwidth'];?>px solid <?php echo $cf5_rps['obrcolor'];?>;font-family:<?php echo $cf5_rps['ltitle_font'];?>;font-size:<?php echo $cf5_rps['ltitle_size'];?>px;line-height:<?php echo ($cf5_rps['ltitle_size']+4);?>px;}img.rps_thumb{width:<?php echo $cf5_rps['img_width'];?>px !important;height:<?php echo $cf5_rps['img_height'];?>px !important;border:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;<?php if($cf5_rps['img_align']=='left') {echo 'float:left;margin:0 5px 5px 0 !important;';}if($cf5_rps['img_align']=='right') {echo 'float:right;margin:0 0 5px 5px !important;';}	?>}.rps_item{<?php if($fgcolor and !empty($fgcolor)){?>background:<?php echo $cf5_rps['fgcolor'];?>;<?php } ?>}.rps_item a{<?php if($ltitle_color and !empty($ltitle_color)){?>color:<?php echo $cf5_rps['ltitle_color'];}?> !important;}.rps_item a:hover ,.rps_item a:active {<?php if($hvtext_color and !empty($hvtext_color)){?>color:<?php echo $cf5_rps['hvtext_color'];?> !important;<?php } if($hvcolor and !empty($hvcolor)){?>border-color:<?php echo $cf5_rps['hvcolor'];?>;background-color: <?php echo $cf5_rps['hvcolor'];?>;<?php } ?>}</style>
+	<style type="text/css">.rps_sldrtitle{font-family:<?php echo $cf5_rps['stitle_font'];?>;font-size:<?php echo $cf5_rps['stitle_size'];?>px;font-weight:<?php echo $cf5_rps['stitle_weight'];?>;font-style:<?php echo $cf5_rps['stitle_style'];?>;<?php if($stitle_color and !empty($stitle_color)){?>color:<?php echo $cf5_rps['stitle_color'];?>;<?php } ?>}.rps_wrapper{<?php if($bgcolor and !empty($bgcolor)){?>background:<?php echo $cf5_rps['bgcolor'];?>;<?php } ?><?php if($ltitle_color and !empty($ltitle_color)){?>color:<?php echo $cf5_rps['ltitle_color'];?>;<?php } ?>border:<?php echo $cf5_rps['obrwidth'];?>px solid <?php echo $cf5_rps['obrcolor'];?>;font-family:<?php echo $cf5_rps['ltitle_font'];?>;font-size:<?php echo $cf5_rps['ltitle_size'];?>px;line-height:<?php echo ($cf5_rps['ltitle_size']+4);?>px;}img.rps_thumb{width:<?php echo $cf5_rps['img_width'];?>px !important;height:<?php echo $cf5_rps['img_height'];?>px !important;border:<?php echo $cf5_rps['ibrwidth'];?>px solid <?php echo $cf5_rps['ibrcolor'];?>;<?php if($cf5_rps['img_align']=='left') {echo 'float:left;margin:0 5px 5px 0 !important;';}if($cf5_rps['img_align']=='right') {echo 'float:right;margin:0 0 5px 5px !important;';}	?>}.rps_item{<?php if($fgcolor and !empty($fgcolor)){?>background:<?php echo $cf5_rps['fgcolor'];?>;<?php } ?>width:<?php echo $cf5_rps['hwidth'];?>px;height:<?php echo $cf5_rps['height'];?>px;}.rps_item a{<?php if($ltitle_color and !empty($ltitle_color)){?>color:<?php echo $cf5_rps['ltitle_color'];}?> !important;}.rps_item a:hover ,.rps_item a:active {<?php if($hvtext_color and !empty($hvtext_color)){?>color:<?php echo $cf5_rps['hvtext_color'];?> !important;<?php } if($hvcolor and !empty($hvcolor)){?>border-color:<?php echo $cf5_rps['hvcolor'];?>;background-color: <?php echo $cf5_rps['hvcolor'];?>;<?php } ?>}</style>
     <?php endif;
 }
 function cf5_rps_wp_footer_h_carousel(){
     global $cf5_rps; ?>
-    <script type="text/javascript"> 
-		jQuery(document).ready(function() {
-			jQuery('#rps_hcarousel').jcarousel({
-			    wrap: 'last',
-				scroll: <?php echo $cf5_rps['per_page']; ?>,
-				animation: "slow",
-				visible: <?php echo $cf5_rps['per_page']; ?>
-			});
-		});
-	</script> 
+
 <?php }
 
 function cf5_rps_h_carousel($echo=true,$rps_posts=array()){
@@ -225,7 +241,7 @@ function cf5_rps_h_carousel($echo=true,$rps_posts=array()){
 	$slider='';
 if($rps_posts and !$rps_slider_shown):
 	$slider='<div class="rps_wrapper">
-	         <ul id="rps_hcarousel" class="jcarousel-skin-'.$cf5_rps['format_style'].'">';
+	         <div id="rps_hcarousel" class="rps_instance">';
 		
 	if($cf5_rps['img_pick'][0] == '1'){
 	 $custom_key = array($cf5_rps['img_pick'][1]);
@@ -302,10 +318,11 @@ if($rps_posts and !$rps_slider_shown):
 		if(empty($content_limit) or $content_limit==''){$flag=0;}else{$flag=1;}
 		if($flag==1){$ltitle = cf5_rps_word_limiter( $ltitle, $limit = $content_limit, $display_dots = false );}
 			
-	    $slider=$slider.$page_html.'<li class="rps_item"><a href="'.$permalink.'" target="'.$cf5_rps['target'].'" >'.cf5_rps_get_the_image($img_args).'<br />'.$ltitle.'</a></li>';
+	    $slider=$slider.$page_html.'<div class="rps_item"><a href="'.$permalink.'" target="'.$cf5_rps['target'].'" >'.cf5_rps_get_the_image($img_args).'<br />'.$ltitle.'</a></div>';
      }
     
-	$slider=$slider.'</ul></div>';
+	$slider=$slider.'</div><a class="rps_prev" id="rps_prev" href="#"><span>prev</span></a>
+	<a class="rps_next" id="rps_next" href="#"><span>next</span></a></div>';
 	
 		if($cf5_rps['support']=='0'){$support='';}
 		else{$support='<div class="rps_support"><a href="http://www.clickonf5.org/related-posts-slider" target="_blank" title="Related Posts Slider - Free WordPress Plugin">Related Posts Slider</a></div>';}
