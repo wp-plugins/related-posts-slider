@@ -26,7 +26,7 @@ The slider is a lightweight jQuery implementation of the related post functional
 
 = Premium Sliders =
 
-If you are looking for designer, easy to install featured content slider (slideshow) for your WordPress site, try [SliderVilla] (http://slidervilla.com/). Some common features of SliderVilla sliders are,
+If you are looking for designer, easy to install featured content slider (slideshow) for your WordPress site, try [SliderVilla](http://slidervilla.com/) . Some common features of SliderVilla sliders are,
 
 * Multiple Sliders on Single Page
 * Different content aut-fetching based on category, publish date or custom choice
