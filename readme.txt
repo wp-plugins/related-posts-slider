@@ -1,10 +1,11 @@
 === Related Posts Slider ===
-Contributors: internet techies
+Contributors: internet techies, slidervilla
 Tags: Related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,simple,thumbnail,image,sidebar,plugin,single,flash,gallery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 2.0
+Tested up to: 3.7.1
+Stable tag: 2.1
+License: GPLv2 or later
 
 Related posts slider creates a very attractive slider of the related content from the same WordPress site or blog. 
 
@@ -19,7 +20,7 @@ The slider is a lightweight jQuery implementation of the related post functional
 * Complete CSS customization from settings panel
 * 2 Pre Styled CSS provided with the plugin, one for dark colored theme and other for lighter theme. Also you can create your own style suitable for your site in no time and use it within the plugin using a simple option.
 * SEO benefits of showing more related posts on the post content page
-* Compatible with YARPP plugin and WordPress Related Posts plugin
+* Pulls Related Post using inbuilt algorithm or you can use with YARPP plugin or WordPress Related Posts plugin (by Zemanta) or Microkid's Related Posts Plugin
 * Widget option available for Related Posts Slider
 * Shortcode option to insert Related Posts Slider in between the content of a post
 * Translation ready
@@ -35,22 +36,22 @@ If you are looking for designer, easy to install featured content slider (slides
 * No need to know programing languages like PHP, HTML, CSS for installation
 
 = RPS Demo and Information = 
-[Demo](http://www.clickonf5.org/internet/online-live-stream-event-free/10888) |
-[Plugin Information](http://www.clickonf5.org/related-posts-slider)
+[Demo](http://www.clickonf5.org/10888/online-live-stream-event-free/) |
+[Plugin Information](http://www.slidervilla.com/related-posts-slider/)
 
 == Installation ==
 
 = Pre Installation Requirement =
-
-You need to install either of the two plugins before installing this plugin:
+By default, the related posts will be pulled automatically based on tags/categories. But if you wish to use any of these three related posts plugins below, you can choose to use their algorithm to pull the related posts:
 
 * [Yet Another Related Posts Plugin](http://wordpress.org/extend/plugins/yet-another-related-posts-plugin/) 
 
-or
+* [Related Posts for WordPress (by Microkid)](http://wordpress.org/plugins/microkids-related-posts/) 
 
 * [WordPress Related Posts](http://wordpress.org/extend/plugins/wordpress-23-related-posts-plugin/)
 
-No need to install both, just one is required. In Related Posts Slider options panel you need to specify which of the above two plugins you are using to pull the related posts.
+If you select to use any of these plugins, you need to install and activate them so that the Related Posts Slider pulls posts using their algorithm.
+No need to install all of them, just one is required. In Related Posts Slider options panel you need to specify which of the above two plugins you are using to pull the related posts.
 
 = Installation =
 
@@ -66,32 +67,25 @@ Related Posts Slider plugin is easy to install like other plug-ins of Wordpress 
 
 == Usage ==
 
-Visit the usage section of the plugin page http://www.clickonf5.org/related-posts-slider to know how to insert and customize the slider. By default the related posts 
-
-slider is inserted automatically below the content area of the post. But you can select manual insertion (either using templte tag or shortcode or widget) thru the 
-
-settings panel of Related Posts Slider WordPress plugin.
+Visit the plugin documentation page at http://guides.slidervilla.com/related-posts-slider to know how to insert and customize the slider. By default the related posts slider is inserted automatically below the content area of the post. But you can select manual insertion (either using templte tag or shortcode or widget) thru the settings panel of Related Posts Slider WordPress plugin.
 
 == Frequently Asked Questions ==
 
-Check the FAQs on Related Posts Slider page of Internet Techies. 
-FAQ section on: http://www.clickonf5.org/related-posts-slider
+FAQ section on: http://www.slidervilla.com/related-posts-slider/
 
 == Screenshots ==
 1. Various Sections of the Related Posts Slider (all can be customized thru Settings Page) (with clean-blue design)
-3. Second slider format - Horizontal carousel
-
-[More Screenshots](http://www.clickonf5.org/related-posts-slider)
+2. Second slider format - Horizontal carousel
 
 == Upgrade Notice ==
-
-= 1.3 =
-Upgrade in case you need to use carousel format of slider or WordPress Related Posts instead of YARPP.
-
-= 1.2 =
-Upgrade if using latest version of YARPP, so that slider will work properly.
+None
 
 == Changelog ==
+
+Version 2.1 (12/04/2013)
+
+1. New: Inbuilt algorithm to pull related posts
+2. New: Included support for Microkid's Related Posts plugin
 
 Version 2.0 (02/26/2012)
 
@@ -112,7 +106,3 @@ Version 1.2 (01/30/2011)
 Version 1.1 (01/29/2011)
 
 1. Fix - Sometimes below content, the slider was not getting atatched. Rather it was showing [rps]. This was when the content contains shortcode at the end. This update fixes the issue.
-
-Visit the first release note on Internet Techies 
-
-[Release Note](http://www.clickonf5.org/wordpress/preview-slider-related-posts-wordpress/10966)

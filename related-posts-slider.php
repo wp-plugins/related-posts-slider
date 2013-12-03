@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: Related Posts Slider
-Plugin URI: http://www.clickonf5.org/related-posts-slider
-Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. Watch Live Demo at <a href="http://www.clickonf5.org/">Internet Techies</a>.
-Version: 2.0	
-Author: Internet Techies
-Author URI: http://www.clickonf5.org/about/tejaswini
+Plugin URI: http://www.slidervilla.com/related-posts-slider/
+Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. 
+Version: 2.1	
+Author: SliderVilla
+Author URI: http://www.slidervilla.com/
 WordPress version supported: 3.0 and above
 */
 
-/*  Copyright 2011  Internet Techies  (email : tedeshpa@gmail.com)
+/*  Copyright 2011-2013  SliderVilla.com  (email : tedeshpa@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","2.0",false);
+define("CF5_RPS_VER","2.1",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 if ( ! defined( 'CF5_RPS_FORMAT_DIR' ) )
 	define( 'CF5_RPS_FORMAT_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/formats/h_carousel/styles/' );
@@ -45,6 +45,7 @@ load_plugin_textdomain('cf5_rps', false, dirname( plugin_basename( __FILE__ ) ) 
 function activate_cf5_rps() {
 	$cf5_rps_opts1 = get_option('cf5_rps_options');
 	$cf5_rps_opts2 =array('per_page' => '4',
+					   'num'=>'10',
 	                   'height'=>'250',
 					   'hwidth'=>'120',
 					   'scroll'=>'1',
@@ -90,9 +91,8 @@ function activate_cf5_rps() {
 					   'target'=>'_self',
 					   'allowable_tags'=>'',
 					   'insert'=>'content_down',
-					   'support' => '1',
 					   'format' => 'default', 
-					   'plugin' => 'yarpp',
+					   'plugin' => 'inbuilt',
 					   'format_style' => 'plain');
 	if ($cf5_rps_opts1) {
 	    $cf5_rps = $cf5_rps_opts1 + $cf5_rps_opts2;
@@ -169,9 +169,13 @@ function get_related_posts_slider($echo=true,$type=array('post')){
     global $cf5_rps;
 	$related_plugin = $cf5_rps['plugin'];
 	if(empty($related_plugin) or !$related_plugin) {
-	  $related_plugin = 'yarpp';
+	  $related_plugin = 'inbuilt';
 	}
-
+//Inbuilt Related Posts Pull
+	if($related_plugin == 'inbuilt') {
+		$rps_posts=get_cf5_inbuilt_related_posts();
+	}
+	
 //if using YARPP	
 	if($related_plugin == 'yarpp') {
 		if(function_exists(yarpp_related)){
@@ -182,6 +186,12 @@ function get_related_posts_slider($echo=true,$type=array('post')){
     if($related_plugin == 'wp_rp') {
 		if(function_exists('wp_get_related_posts')){
 		  $rps_posts=get_cf5_wp_rp_related_posts();
+		}
+	}
+//if using Microkids' Related Post Plugin
+	if($related_plugin == 'MRP') {
+		if(function_exists('MRP_get_related_posts')){
+		  $rps_posts=get_cf5_MRP_related_posts();
 		}
 	}
 	
@@ -198,6 +208,9 @@ function get_related_posts_slider($echo=true,$type=array('post')){
 	}
 	return $rps_func($echo,$rps_posts);
 }
+
+//Pull Related Posts
+require_once (dirname (__FILE__) . '/includes/cf5-rps-pull-related-posts.php');
 
 function cf5_rps_automatic_insertion($content){
  global $cf5_rps,$post,$wp_query;
@@ -225,151 +238,6 @@ function cf5_rps_shortcode($atts) {
 	else{return '';}
 }
 add_shortcode('rps', 'cf5_rps_shortcode');
-
-function get_cf5_wp_rp_related_posts() {
-if(function_exists('wp_get_related_posts')):
-	global $wpdb, $post;
-	$wp_rp = get_option("wp_rp");
-	
-	$wp_rp_title = $wp_rp["wp_rp_title"];
-	
-	$exclude = explode(",",$wp_rp["wp_rp_exclude"]);	
-	if ( $exclude != '' ) {
-		$q = 'SELECT tt.term_id FROM '. $wpdb->term_taxonomy.'  tt, ' . $wpdb->term_relationships.' tr WHERE tt.taxonomy = \'category\' AND tt.term_taxonomy_id = tr.term_taxonomy_id AND tr.object_id = '.$post->ID;
-
-		$cats = $wpdb->get_results($q);
-		
-		foreach(($cats) as $cat) {
-			if (in_array($cat->term_id, $exclude) != false){
-				return;
-			}
-		}
-	}
-		
-	if(!$post->ID){return;}
-	$now = current_time('mysql', 1);
-	$tags = wp_get_post_tags($post->ID);
-	
-	$taglist = "'" . $tags[0]->term_id. "'";
-	
-	$tagcount = count($tags);
-	if ($tagcount > 1) {
-		for ($i = 1; $i < $tagcount; $i++) {
-			$taglist = $taglist . ", '" . $tags[$i]->term_id . "'";
-		}
-	}
-	
-	$limit = $wp_rp["wp_rp_limit"];
-	if ($limit) {
-		$limitclause = "LIMIT $limit";
-	}	else {
-		$limitclause = "LIMIT 10";
-	}
-	
-	$q = "SELECT p.ID, p.post_title, p.post_content,p.post_excerpt, p.post_date,  p.comment_count, count(t_r.object_id) as cnt FROM $wpdb->term_taxonomy t_t, $wpdb->term_relationships t_r, $wpdb->posts p WHERE t_t.taxonomy ='post_tag' AND t_t.term_taxonomy_id = t_r.term_taxonomy_id AND t_r.object_id  = p.ID AND (t_t.term_id IN ($taglist)) AND p.ID != $post->ID AND p.post_status = 'publish' AND p.post_date_gmt < '$now' GROUP BY t_r.object_id ORDER BY cnt DESC, p.post_date_gmt DESC $limitclause;";
-	
-	$related_posts = $wpdb->get_results($q);
-		
-	if (!$related_posts){
-		$wp_no_rp = $wp_rp["wp_no_rp"];
-		$wp_no_rp_text = $wp_rp["wp_no_rp_text"];
-	
-		if(!$wp_no_rp || ($wp_no_rp == "popularity" && !function_exists('akpc_most_popular'))) $wp_no_rp = "text";
-		
-		if($wp_no_rp == "text"){
-		}	else{
-			if($wp_no_rp == "random"){
-				$related_posts = wp_get_random_posts($limitclause);
-			}	elseif($wp_no_rp == "commented"){
-				$related_posts = wp_get_most_commented_posts($limitclause);
-			}	elseif($wp_no_rp == "popularity"){
-				$related_posts = wp_get_most_popular_posts($limitclause);
-			}
-			$wp_rp_title = $wp_no_rp_text;
-		}
-	}
-	
-	$rps_posts = array();
-	foreach ($related_posts as $related_post ){
-	  $rps_posts[]=$related_post->ID;
-    }
-	return $rps_posts;
- endif;   
-}
-
-function get_cf5_yarpp_related_posts($type,$args,$reference_ID=false) {
-if(function_exists(yarpp_related)):
-	global $wpdb, $post, $userdata, $yarpp_time, $yarpp_demo_time, $wp_query, $id, $page, $pages, $authordata, $day, $currentmonth, $multipage, $more, $pagenow, $numpages, $yarpp_cache, $yarpp;
-	
-	get_currentuserinfo();
-
-	// set the "domain prefix", used for all the preferences.
-	$domainprefix = '';
-	
-if ( !$reference_ID )
-			$reference_ID = get_the_ID();
-	
-		// if we're already in a YARPP loop, stop now.
-		if ( $yarpp->cache->is_yarpp_time() || $yarpp->cache_bypass->is_yarpp_time() )
-			return false;
-
-		$options = array( 'domain', 'limit', 'use_template', 'order', 'template_file', 'promote_yarpp' );
-		extract( $yarpp->parse_args( $args, $options ) );
-
-		$cache_status = $yarpp->cache->enforce($reference_ID);
-		// If cache status is YARPP_DONT_RUN, end here without returning or echoing anything.
-		if ( YARPP_DONT_RUN == $cache_status )
-			return;
-		
-		if ( YARPP_NO_RELATED == $cache_status ) {
-			// There are no results, so no yarpp time for us... :'(
-		} else {
-			// Get ready for YARPP TIME!
-			$yarpp->cache->begin_yarpp_time($reference_ID, $args);
-		}
-	
-		// so we can return to normal later
-		$current_query = $wp_query;
-		$current_pagenow = $pagenow;
-	
-		$output = '';
-		$wp_query = new WP_Query();
-		if ( YARPP_NO_RELATED == $cache_status ) {
-			// If there are no related posts, get no query
-		} else {
-			$orders = explode(' ',$order);
-			$wp_query->query(array(
-				'p' => $reference_ID,
-				'orderby' => $orders[0],
-				'order' => $orders[1],
-				'showposts' => $limit,
-				'post_type' => ( isset($args['post_type']) ? $args['post_type'] : $yarpp->get_post_types( 'name' ) )
-			));
-		}
-		//$yarpp->prep_query( $current_query->is_feed );
-		$related_query = $wp_query; 
-	
-	$rps_posts = array();
-	if ($related_query->have_posts()) {
-	while ($related_query->have_posts()) {
-		$related_query->the_post();
-		$rps_posts[]=get_the_ID();
-	}}
-	
-	if ( YARPP_NO_RELATED == $cache_status ) {
-			// Uh, do nothing. Stay very still.
-		} else {
-			$yarpp->cache->end_yarpp_time(); // YARPP time is over... :(
-		}
-	
-		// restore the older wp_query.
-		$wp_query = $current_query; unset($current_query); unset($related_query);
-		wp_reset_postdata();
-		$pagenow = $current_pagenow; unset($current_pagenow);
-  
-  return $rps_posts;
-endif;
-}
 
 class CF5_RPS_Widget extends WP_Widget {
 	function CF5_RPS_Widget() {

@@ -171,8 +171,6 @@ if($rps_posts and !$rps_slider_shown):
 				    </div>
 			</div>
 		</div>';
-		if($cf5_rps['support']=='0'){$support='';}
-		else{$support='<span class="rps_support"><a href="http://www.clickonf5.org/related-posts-slider" target="_blank" title="Related Posts Slider - Free WordPress Plugin">Related Posts Slider</a></span>';}
 		$sldr_title='<div class="rps_sldrtitle">'.$support.$cf5_rps['sldr_title'].'</div><div class="cf5_rps_cr"></div>';
 		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div><div class="cf5_rps_cr"></div></div>';
       if($echo){
@@ -324,8 +322,6 @@ if($rps_posts and !$rps_slider_shown):
 	$slider=$slider.'</div><a class="rps_prev" id="rps_prev" href="#"><span>prev</span></a>
 	<a class="rps_next" id="rps_next" href="#"><span>next</span></a></div>';
 	
-		if($cf5_rps['support']=='0'){$support='';}
-		else{$support='<div class="rps_support"><a href="http://www.clickonf5.org/related-posts-slider" target="_blank" title="Related Posts Slider - Free WordPress Plugin">Related Posts Slider</a></div>';}
 		$sldr_title='<div class="rps_sldrtitle">'.$cf5_rps['sldr_title'].'</div>';
 		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div>'.$support.'<div class="cf5_rps_cr"></div></div>';
       if($echo){
