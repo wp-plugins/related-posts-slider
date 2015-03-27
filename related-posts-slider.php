@@ -3,13 +3,13 @@
 Plugin Name: Related Posts Slider
 Plugin URI: http://www.slidervilla.com/related-posts-slider/
 Description: Related posts slider creates a very attractive slider of the related posts or/and pages for a WordPress post or page. The slider is a lightweight jQuery implementation of the related post functionality. 
-Version: 2.1	
+Version: 2.1.1	
 Author: SliderVilla
 Author URI: http://www.slidervilla.com/
 WordPress version supported: 3.0 and above
 */
 
-/*  Copyright 2011-2013  SliderVilla.com  (email : tedeshpa@gmail.com)
+/*  Copyright 2011-2015  SliderVilla.com  (email : tedeshpa@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ if ( ! defined( 'CF5_RPS_PLUGIN_BASENAME' ) )
 	define( 'CF5_RPS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( ! defined( 'CF5_RPS_CSS_DIR' ) )
 	define( 'CF5_RPS_CSS_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/css/' );
-define("CF5_RPS_VER","2.1",false);
+define("CF5_RPS_VER","2.1.1",false);
 define('CF5_RPS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 if ( ! defined( 'CF5_RPS_FORMAT_DIR' ) )
 	define( 'CF5_RPS_FORMAT_DIR', WP_PLUGIN_DIR.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)).'/formats/h_carousel/styles/' );
@@ -280,7 +280,8 @@ function cf5_rps_word_limiter( $text, $limit = 40 , $display_dots = true) {
         $dots = '';
     }
     for($i=0;$i<$limit;$i++){
-        $string .= $explode[$i]." ";
+    	if(!isset($explode[$i])) break;
+        else $string .= $explode[$i]." ";
     }
     if ($dots) {
         $string = substr($string, 0, strlen($string));

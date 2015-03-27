@@ -171,7 +171,7 @@ if($rps_posts and !$rps_slider_shown):
 				    </div>
 			</div>
 		</div>';
-		$sldr_title='<div class="rps_sldrtitle">'.$support.$cf5_rps['sldr_title'].'</div><div class="cf5_rps_cr"></div>';
+		$sldr_title='<div class="rps_sldrtitle">'.$cf5_rps['sldr_title'].'</div><div class="cf5_rps_cr"></div>';
 		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div><div class="cf5_rps_cr"></div></div>';
       if($echo){
 		echo $rpsslider;
@@ -323,7 +323,7 @@ if($rps_posts and !$rps_slider_shown):
 	<a class="rps_next" id="rps_next" href="#"><span>next</span></a></div>';
 	
 		$sldr_title='<div class="rps_sldrtitle">'.$cf5_rps['sldr_title'].'</div>';
-		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div>'.$support.'<div class="cf5_rps_cr"></div></div>';
+		$rpsslider='<div class="cf5_rps">'.$sldr_title.$slider.'<div class="cf5_rps_cl"></div><div class="cf5_rps_cr"></div></div>';
       if($echo){
 		echo $rpsslider;
 		$rps_slider_shown = true;

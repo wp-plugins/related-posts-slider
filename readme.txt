@@ -2,9 +2,9 @@
 Contributors: internet techies, slidervilla
 Tags: Related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,simple,thumbnail,image,sidebar,plugin,single,flash,gallery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
-Requires at least: 3.0
-Tested up to: 3.7.1
-Stable tag: 2.1
+Requires at least: 3.5
+Tested up to: 4.1.1
+Stable tag: 2.1.1
 License: GPLv2 or later
 
 Related posts slider creates a very attractive slider of the related content from the same WordPress site or blog. 
@@ -82,6 +82,10 @@ None
 
 == Changelog ==
 
+Version 2.1.1 (03/25/2015)
+
+1. Fix: Made the related posts slider compatible with WordPress 4.1.1
+
 Version 2.1 (12/04/2013)
 
 1. New: Inbuilt algorithm to pull related posts
@@ -105,4 +109,4 @@ Version 1.2 (01/30/2011)
 
 Version 1.1 (01/29/2011)
 
-1. Fix - Sometimes below content, the slider was not getting atatched. Rather it was showing [rps]. This was when the content contains shortcode at the end. This update fixes the issue.
+1. Fix - Sometimes below content, the slider was not getting attached. Rather it was showing [rps]. This was when the content contains shortcode at the end. This update fixes the issue.
