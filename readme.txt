@@ -3,7 +3,7 @@ Contributors: internet techies, slidervilla
 Tags: Related,post,slideshow,posts,jquery,slider,content,widget,shortcode,carousel,simple,thumbnail,image,sidebar,plugin,single,flash,gallery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/ 
 Requires at least: 3.5
-Tested up to: 4.1.1
+Tested up to: 4.2
 Stable tag: 2.1.1
 License: GPLv2 or later
 
